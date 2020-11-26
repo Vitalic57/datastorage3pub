@@ -288,15 +288,15 @@ getDateByIndex.Data <- function(this, indexes = NULL){
 
 
 nrow.Data <- function(this){
-  nrow(this$mat$close)
+  nrow(this$mat[[1]])
 }
 
 
 ncol.Data <- function(this){
-  ncol(this$mat$close)
+  ncol(this$mat[[1]])
 }
 
 
 colnames.Data <- function(this){
-  colnames(this$series$close)
+  colnames(this$mat[[1]])
 }
