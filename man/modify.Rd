@@ -12,7 +12,27 @@ modify(this, ...)
 \arguments{
 \item{this}{Data}
 
-\item{...}{one of c("period", "currency", "freq", "from", "to", 'period_build', 'columns', 'candles')}
+\item{...}{one of c("period", "currency", "freq", "from", "to", 'columns', 'candles', "na_omit", "na_locf")
+
+* period - input for period argument of xts::to.period function
+
+* currency - currency of the model, all traded instruments will be converted to that currency
+
+* freq - input for k argument of xts::to.period function
+
+* from - start date of downloads
+
+* to - end date of downloads
+
+* columns - character vector with elements from c('cl', 'ad', 'op', 'hi', 'lo', 'di', 'sp')
+
+* candles - logical, whether save candles of instruments or not in candles slot
+
+* na_locf - logical, whether apply na.locf to cbinded data or not
+
+* na_omit - logical, whether apply na.omit to cbinded traded instruments and then create tables or not.
+If na_locf argument is TRUE and na_omit is FALSE, then despite of na_omit will be na.locf(fromLast = TRUE)
+for not to cut initial points where instruments were not existed.}
 }
 \value{
 Data object

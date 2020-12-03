@@ -9,6 +9,8 @@ data_from_list_xts(
   names_from_list = TRUE,
   candles = FALSE,
   data = NULL,
+  na_omit = TRUE,
+  na_locf = TRUE,
   columns = c("Cl", "Ad", "Vo", "Di", "Sp")
 )
 }

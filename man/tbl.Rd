@@ -23,13 +23,13 @@
 tbl(
   this,
   name,
-  download = NULL,
-  one_by_one = TRUE,
-  price_align = FALSE,
-  fun_table = NULL,
-  fun_component = NULL,
-  fun_download = "getSymbols",
-  action_seq = c("cbind", "fun", "price", "ex_rate"),
+  download,
+  one_by_one,
+  price_align,
+  fun_table,
+  fun_component,
+  fun_download,
+  action_seq,
   ...
 )
 }

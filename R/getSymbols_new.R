@@ -76,19 +76,24 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
       }else{
         candles <- this$._candles
       }
-      this <- data_from_list_xts(trade_inst, names_from_list = TRUE, candles = candles, data = this)
+      if('na_locf' %in% names(dots)){
+        na_locf <- dots[['na_locf']]
+      }else{
+        na_locf <- this$na_locf
+      }
+      if('na_omit' %in% names(dots)){
+        na_omit <- dots[['na_omit']]
+      }else{
+        na_omit <- this$na_omit
+      }
+      this <- data_from_list_xts(trade_inst,
+                                 names_from_list = TRUE,
+                                 candles = candles,
+                                 na_omit = na_omit,
+                                 na_locf = na_locf,
+                                 data = this)
     }
     this$nontraded <- nontraded
-    this$nrow <- nrow.Data(this)
-    this$ncol <- ncol.Data(this)
-    this$colnames <- colnames.Data(this)
-    if('close' %in% names(this$mat)){
-      this$price_table <- which(names(this$mat) == 'close')
-    }else if('adjusted' %in% names(this$mat)){
-      this$price_table <- which(names(this$mat) == 'adjusted')
-    }else{
-      warning('Price table is not specified')
-    }
 
   }
 

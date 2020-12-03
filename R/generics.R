@@ -46,25 +46,6 @@ funs <- lapply(funs_all, f_makeGen)
 names(funs) <- funs_all
 list2env(funs,envir = environment())
 
-#' @export
-calcSensibilityToCurr <- function(this, ...){
-  UseMethod('calcSensibilityToCurr', this)
-}
-
-#' @export
-calcSensibilityToAssets <- function(this, ...){
-  UseMethod('calcSensibilityToAssets', this)
-}
-
-#' @export
-getSensibilityToCurr <- function(this, ...){
-  UseMethod('getSensibilityToCurr', this)
-}
-
-#' @export
-getSensibilityToAssets <- function(this, ...){
-  UseMethod('getSensibilityToAssets', this)
-}
 
 #' @export
 toPeriod <- function(this, ...){
@@ -101,25 +82,10 @@ setBuildPeriod <- function(this, ...){
   UseMethod('setBuildPeriod', this)
 }
 
-#' @export
-getVolumeFun <- function(this,...){
-  UseMethod('getVolumeFun', this)
-}
-
-#' @export
-setVolumeFun <- function(this,...){
-  UseMethod('setVolumeFun', this)
-}
-
-#' @export
-download_raw <- function(this,...){
-  UseMethod('download_raw', this)
-}
-
 #' Adds new currency to this, it can add several currencies
 #'
 #' @param this Data
-#' @param ... here character vector
+#' @param ... character vector
 #'
 #' @return Data object
 #' @export
@@ -231,13 +197,13 @@ ls_instruments <- function(this){
 #' @export
 tbl <- function(this,
                 name,
-                download=NULL,
-                one_by_one=TRUE,
-                price_align=FALSE,
-                fun_table=NULL,
-                fun_component=NULL,
-                fun_download="getSymbols",
-                action_seq=c("cbind", "fun", "price", "ex_rate"),
+                download,
+                one_by_one,
+                price_align,
+                fun_table,
+                fun_component,
+                fun_download,
+                action_seq,
                 ...){
     UseMethod('tbl', this)
 }

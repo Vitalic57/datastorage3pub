@@ -8,19 +8,42 @@ data_from_list_xts <- function(l,
                                names_from_list = TRUE,
                                candles = FALSE,
                                data = NULL,
+                               na_omit = TRUE,
+                               na_locf = TRUE,
                                columns = c('Cl', 'Ad', 'Vo', 'Di', 'Sp')){
   f <- . %>% Reduce('cbind', .)
   if(names_from_list){
     f <- . %>% Reduce('cbind', .) %>% set_colnames(names(l))
   }
 
-  dates <- lapply(l, function(x){
-    x[,1]
-  }) %>% f %>% na.omit %>% index
+  g <- . %>%
+    {
+      if(na_locf){
+        na.locf(.)
+      }else{
+        .
+      }
+    } %>%
+    {
+      if(na_omit){
+        na.omit(.)
+      }else if(na_locf){
+        na.locf(., fromLast = TRUE)
+      }else{
+        .
+      }
+    }
+
+  dates <- l %>% Reduce('cbind', .) %>%
+    g %>%
+    index
+
   l <- lapply(l, function(x){
-    if(is.null(data)){
-      x[dates]
-    }else{
+    merge(x, dates) %>% g %>% .[dates]
+  })
+
+  l <- lapply(l, function(x){
+    if(!is.null(data)){
       to.period2(x[dates], period = data$._period, k = data$._freq)
     }
   })
@@ -101,10 +124,9 @@ data_from_list_xts <- function(l,
       tryCatch({
         Di(x)
       }, error = function(e){
-        # print(e)
         DEFAULT_DIV
       })
-    }) %>% f
+    }) %>% f %>% na.fill(DEFAULT_DIV)
   }else{
     dividends <- NULL
   }
@@ -114,10 +136,9 @@ data_from_list_xts <- function(l,
       tryCatch({
         Sp(x)
       }, error = function(e){
-        # print(e)
         DEFAULT_SPLIT
       })
-    }) %>% f
+    }) %>% f %>% na.fill(DEFAULT_SPLIT)
   }else{
     splits <- NULL
   }
@@ -139,7 +160,6 @@ data_from_list_xts <- function(l,
   data$mat <- list()
 
 
-
   data$series$adjusted <- adjusted
   data$series$close <- close
   data$series$dividends <- dividends
@@ -152,6 +172,16 @@ data_from_list_xts <- function(l,
     data$mat[[name]] <- coredata(data$series[[name]])
   }
   data$dates <- index(l[[1]])
+  data$nrow <- nrow.Data(data)
+  data$ncol <- ncol.Data(data)
+  data$colnames <- colnames.Data(data)
+  if('close' %in% names(data$mat)){
+    data$price_table <- which(names(data$mat) == 'close')
+  }else if('adjusted' %in% names(data$mat)){
+    data$price_table <- which(names(data$mat) == 'adjusted')
+  }else{
+    warning('Price table is not specified')
+  }
   return(data)
 }
 

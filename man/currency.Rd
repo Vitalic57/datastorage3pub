@@ -12,7 +12,7 @@ currency(this, ...)
 \arguments{
 \item{this}{Data}
 
-\item{...}{here character vector}
+\item{...}{character vector}
 }
 \value{
 Data object
