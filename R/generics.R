@@ -305,17 +305,6 @@ update_instruments <- function(this, ...){
   UseMethod('update_instruments', this)
 }
 
-#' Adds futures to this
-#'
-#' @param this Data object
-#' @param ... see in FinancialInstrument::future
-#'
-#' @return Data object
-#' @export
-future <- function(this, ...){
-  UseMethod('future', this)
-}
-
 #' Get data from soures
 #'
 #' @param Symbols Data / character
@@ -485,6 +474,11 @@ setOrder <- function(this, ...){
 adjust <- function(this, ...){
   UseMethod('adjust', this)
 }
+
+# #' @export
+# loadAdditional <- function(this, ...){
+#   UseMethod('loadAdditional', this)
+# }
 
 #create s3 methods with try catch
 #these methods do not return Data

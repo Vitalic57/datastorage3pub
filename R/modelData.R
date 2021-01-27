@@ -14,6 +14,10 @@ Data <- function(){
     ._candles = FALSE,
     na_locf = TRUE,
     na_omit = TRUE,
+    ncol = 0,
+    nrow = 0,
+    mat = list(),
+    nontraded = list(),
     exchange_rates = new.env(), # environment for data of exchange rates
     envir = new.env(), #Financial instrument environment
     tablesenv = new.env() # info for additional tables

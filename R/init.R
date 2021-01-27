@@ -1,4 +1,4 @@
-PARAMS <- settings::options_manager(src = 'yahoo', currency = 'USD')
+PARAMS <- settings::options_manager(src = 'yahoo', currency = 'USD', getSymbols_version = 'new')
 
 #' Set or get option for datastorage package
 #'

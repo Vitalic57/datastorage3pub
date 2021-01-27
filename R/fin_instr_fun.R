@@ -1,5 +1,5 @@
 
-instrument <- function (primary_id, ..., currency, multiplier, tick_size = NULL,
+instrument <- function (primary_id, ..., currency, multiplier=1, tick_size = NULL,
                         trade = TRUE,
           identifiers = NULL, type = NULL, assign_i = FALSE, overwrite = TRUE)
 {
@@ -83,40 +83,27 @@ instrument <- function (primary_id, ..., currency, multiplier, tick_size = NULL,
 }
 
 
-
-
-
-#' Add futures
-#'
-#' @param this Data
-#' @param ... args
-#'
-#' @return Data object
-#' @rdname future
-#' @method future Data
-#' @export
-#'
-future.Data <- function(this,...){
-  f <- 'future'
-  suppressWarnings({
-    tmp <- FinancialInstrument:::.instrument
-    assignInNamespace(".instrument", this$envir, "FinancialInstrument")
-    tryCatch({
-      eval(parse(text = paste0('FinancialInstrument::',f,"(...)")))
-      if('primary_id' %in% names(dots)){
-        setOrder(this, c(getOrder(this), dots[['primary_id']]))
-      }else{
-        setOrder(this, c(getOrder(this), dots[[1]]))
-      }
-      return(this)
-    },
-    finally =
-      assignInNamespace(".instrument", tmp, "FinancialInstrument"))
-  })
+add_currency_to_dots <- function(this, dots){
+  currencies <- ls_currencies(this)
+  if(is.null(currencies)){
+    if("currency" %in% names(dots)){
+      currency(this, dots[['currency']])
+    }else{
+      currency(this, PARAMS('currency'))
+    }
+  }
+  currencies <- ls_currencies(this)
+  if(!"currency" %in% names(dots)){
+    if(length(currencies) == 0){
+      stop("Please, define currency of this first")
+    }else if(length(currencies) > 1){
+      stop("Please, choose currency of instrument")
+    }else{
+      dots[['currency']] <- currencies
+    }
+  }
+  return(dots)
 }
-
-
-
 
 
 #' Add stock
@@ -138,24 +125,7 @@ stock.Data <- function(this, ...){
     if(!'src' %in% names(dots)){
       dots[['src']] <- PARAMS('src')
     }
-    currencies <- ls_currencies(this)
-    if(is.null(currencies)){
-      if("currency" %in% names(dots)){
-        currency(this, dots[['currency']])
-      }else{
-        currency(this, PARAMS('currency'))
-      }
-    }
-    currencies <- ls_currencies(this)
-    if(!"currency" %in% names(dots)){
-      if(length(currencies) == 0){
-        stop("Please, define currency of this first")
-      }else if(length(currencies) > 1){
-        stop("Please, choose currency of instrument")
-      }else{
-        dots[['currency']] <- currencies
-      }
-    }
+    dots <- add_currency_to_dots(this, dots)
     do.call(eval(parse(text = paste0('FinancialInstrument::',f))), args = dots)
     if('primary_id' %in% names(dots)){
       setOrder(this, c(getOrder(this), dots[['primary_id']]))
@@ -166,7 +136,7 @@ stock.Data <- function(this, ...){
   },
   finally =
     assignInNamespace(".instrument", tmp, "FinancialInstrument"))
-  return(this)
+  return(invisible(this))
 }
 
 
@@ -188,24 +158,7 @@ index.Data <- function(this, ...){
     if(!'src' %in% names(dots)){
       dots[['src']] <- PARAMS('src')
     }
-    currencies <- ls_currencies(this)
-    if(is.null(currencies)){
-      if("currency" %in% names(dots)){
-        currency(this, dots[['currency']])
-      }else{
-        currency(this, PARAMS('currency'))
-      }
-    }
-    currencies <- ls_currencies(this)
-    if(!"currency" %in% names(dots)){
-      if(length(currencies) == 0){
-        stop("Please, define currency of this first")
-      }else if(length(currencies) > 1){
-        stop("Please, choose currency of instrument")
-      }else{
-        dots[['currency']] <- currencies
-      }
-    }
+    dots <- add_currency_to_dots(this, dots)
     do.call('index_', args = dots)
     if('primary_id' %in% names(dots)){
       setOrder(this, c(getOrder(this), dots[['primary_id']]))
@@ -216,7 +169,7 @@ index.Data <- function(this, ...){
   },
   finally =
     assignInNamespace(".instrument", tmp, "FinancialInstrument"))
-  return(this)
+  return(invisible(this))
 }
 
 
@@ -331,7 +284,7 @@ tbl.Data <- function(this,
                                   ex_rate=ex_rate,
                                   action_seq=action_seq,
                                   args_download = list(...))
-  this
+  return(invisible(this))
 }
 
 
@@ -407,10 +360,10 @@ exchange_rate.Data <- function(this,
                ..., counter_currency = counter_currency, type = c("exchange_rate",
                                                                   "currency"), assign_i = assign_i)
 
-    return(this)
   },
   finally =
     assignInNamespace(".instrument", tmp, "FinancialInstrument"))
+  return(invisible(this))
 }
 
 

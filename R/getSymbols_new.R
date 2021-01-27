@@ -11,7 +11,7 @@
 getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
   dots <- list(...)
   if(prices){
-    instruments <- sapply(c(ls_stocks, ls_futures, ls_exchange_rates, ls_indexes), function(x) this %>% x) %>% unlist
+    instruments <- sapply(c(ls_stocks, ls_exchange_rates, ls_indexes), function(x) this %>% x) %>% unlist
     trade_inst <- list()
     nontraded <- list()
 

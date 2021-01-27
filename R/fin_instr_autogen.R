@@ -17,6 +17,7 @@ currency.Data <- function(this, ...){
   },
   finally =
     assignInNamespace('.instrument', tmp, 'FinancialInstrument'))
+  return(invisible(this))
 }
 
 #' rm_instruments
@@ -36,6 +37,7 @@ rm_instruments.Data <- function(this, ...){
   },
   finally =
     assignInNamespace('.instrument', tmp, 'FinancialInstrument'))
+  return(invisible(this))
 }
 
 #' instrument_attr

@@ -4,9 +4,9 @@
 \alias{getSymbols.Data}
 \title{Get data for Data object}
 \usage{
-\method{getSymbols}{Data}(this, version = "new", ...)
+\method{getSymbols}{Data}(this, version = NULL, ...)
 
-\method{getSymbols}{Data}(this, version = "new", ...)
+\method{getSymbols}{Data}(this, version = NULL, ...)
 }
 \arguments{
 \item{this}{Data}

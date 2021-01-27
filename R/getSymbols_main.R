@@ -24,6 +24,16 @@ download_instrument <- function(this, name, from, to, ...){
   }else{
     time <- NULL
   }
+  if('days_to_expir' %in% names(info)){
+    days_to_expir <- info$days_to_expir
+  }else{
+    days_to_expir <- NULL
+  }
+  if('contracts' %in% names(info)){
+    contracts <- info$contracts
+  }else{
+    contracts <- NULL
+  }
   dots <- list(...)
   # download symbols
   for(id in ids){
@@ -34,7 +44,9 @@ download_instrument <- function(this, name, from, to, ...){
                    period = period,
                    time = time,
                    src = info$src,
-                   auto.assign = FALSE
+                   auto.assign = FALSE,
+                   contracts=contracts,
+                   days_to_expir = days_to_expir
       )
       args <- c(args, dots)
       if('args_getSymbols' %in% names(info)){
@@ -68,7 +80,10 @@ is_without_args <- function(f){
 #'
 #' @return Data
 #' @export
-getSymbols.Data <- function(this, version = 'new',...){
+getSymbols.Data <- function(this, version = NULL,...){
+  if(is.null(version)){
+    version <- PARAMS('getSymbols_version')
+  }
   dots <- lapply(names(this), function(name){
     if(substr(name, 1, 2) == '._'){
       NULL

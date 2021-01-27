@@ -34,7 +34,7 @@ data_from_list_xts <- function(l,
       }
     }
 
-  dates <- l %>% Reduce('cbind', .) %>%
+  dates <- l %>% lapply(function(x) x[,1]) %>% Reduce('cbind', .)  %>%
     g %>%
     index
 
@@ -45,6 +45,8 @@ data_from_list_xts <- function(l,
   l <- lapply(l, function(x){
     if(!is.null(data)){
       to.period2(x[dates], period = data$._period, k = data$._freq)
+    }else{
+      x[dates]
     }
   })
   if(is.null(data)){
@@ -171,6 +173,7 @@ data_from_list_xts <- function(l,
   for(name in names(data$series)){
     data$mat[[name]] <- coredata(data$series[[name]])
   }
+  data$series <- NULL
   data$dates <- index(l[[1]])
   data$nrow <- nrow.Data(data)
   data$ncol <- ncol.Data(data)
