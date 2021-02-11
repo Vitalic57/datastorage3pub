@@ -76,6 +76,7 @@ add.identifier.Data <- function(this, ...){
   },
   finally =
     assignInNamespace('.instrument', tmp, 'FinancialInstrument'))
+  return(invisible(this))
 }
 
 #' ls_stocks

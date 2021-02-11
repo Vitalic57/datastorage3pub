@@ -9,12 +9,13 @@
   this,
   primary_id = NULL,
   currency = NULL,
-  counter_currency = NULL,
+  base_currency = NULL,
   tick_size = 0.01,
   identifiers = NULL,
   assign_i = TRUE,
   overwrite = TRUE,
   multiplier = 1,
+  trade = TRUE,
   ...
 )
 
@@ -27,7 +28,7 @@ exchange_rate(this, ...)
 
 \item{currency}{character}
 
-\item{counter_currency}{character}
+\item{base_currency}{character}
 
 \item{tick_size}{numeric}
 

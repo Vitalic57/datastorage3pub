@@ -11,7 +11,7 @@
 getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
   dots <- list(...)
   if(prices){
-    instruments <- sapply(c(ls_stocks, ls_exchange_rates, ls_indexes), function(x) this %>% x) %>% unlist
+    instruments <- sapply(c(ls_stocks, ls_indexes), function(x) this %>% x) %>% unlist
     trade_inst <- list()
     nontraded <- list()
 
@@ -63,7 +63,28 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
       }else{
         nontraded[[info$primary_id]] <- x
       }
+    }
 
+    instruments <- ls_exchange_rates(this)
+
+    # download and sort symbols ---------------------------------------------------------------------------------
+    for(instr in instruments){
+      info <- getInstrument(this, instr)
+
+      x <- download_instrument(this, instr, add.actions = FALSE, ...)
+
+      inds <- c(has.Op(x, which = TRUE),
+                has.Hi(x, which = TRUE),
+                has.Lo(x, which = TRUE),
+                has.Cl(x, which = TRUE))
+      inds <- setdiff(inds, 0)
+      x[,inds] <- x[,inds] * info$multiplier
+      if(info[['trade']]){
+        trade_inst[[info$primary_id]] <- x
+      }else{
+        nontraded[[info$primary_id]] <- x
+      }
+      this$exchange_rates[[paste0(info$counter_currency, info$currency)]] <- Cl(x)
     }
     ##############################################################################################################
     # creation of main tables
@@ -94,14 +115,24 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
                                  data = this)
     }
     this$nontraded <- nontraded
-
+    for(i in seq_along(this$exchange_rates)){
+      this$exchange_rates[[i]] <- this$exchange_rates[[i]] %>%
+        merge(this$dates) %>%
+        na.locf %>%
+        na.locf(fromLast=TRUE) %>%
+        .[this$dates] %>%
+        coredata
+    }
   }
+
 
   if(tables){
     add_tables(this, ...)
   }
   return(this)
 }
+
+
 
 
 add_tables <- function(this, ...){

@@ -105,6 +105,31 @@ add_currency_to_dots <- function(this, dots){
   return(dots)
 }
 
+add_exchange_rate <- function(this, counter){
+  counter_cur <- counter
+  base_cur <- this$currency
+  if(counter_cur == base_cur){
+    return(invisible(NULL))
+  }
+  ex <- paste0(base_cur, counter_cur)
+  for(ex_rate in ls_exchange_rates(this)){
+    ex_rate <- getInstrument(this, ex_rate)
+    if(ex_rate$currency == counter_cur && ex_rate$counter_currency == base_cur ||
+       ex_rate$currency == base_cur && ex_rate$counter_currency == counter_cur){
+      return(invisible(NULL))
+    }
+  }
+  if(PARAMS('src') == 'bloomberg'){
+    exchange_rate(this, ex, src = 'bloomberg', download = paste0(base_cur, counter_cur, " Curncy"), trade = FALSE)
+  }else if(PARAMS('src') == 'yahoo'){
+    if(base_cur == 'USD'){
+      exchange_rate(this, ex, src = 'yahoo', download = paste0(counter_cur, "=X"), trade = FALSE)
+    }else{
+      exchange_rate(this, ex, src = 'yahoo', download = paste0(base_cur, counter_cur, "=X"), trade = FALSE)
+    }
+  }
+}
+
 
 #' Add stock
 #'
@@ -126,6 +151,7 @@ stock.Data <- function(this, ...){
       dots[['src']] <- PARAMS('src')
     }
     dots <- add_currency_to_dots(this, dots)
+    add_exchange_rate(this, dots[['currency']])
     do.call(eval(parse(text = paste0('FinancialInstrument::',f))), args = dots)
     if('primary_id' %in% names(dots)){
       setOrder(this, c(getOrder(this), dots[['primary_id']]))
@@ -159,6 +185,7 @@ index.Data <- function(this, ...){
       dots[['src']] <- PARAMS('src')
     }
     dots <- add_currency_to_dots(this, dots)
+    add_exchange_rate(this, dots[['currency']])
     do.call('index_', args = dots)
     if('primary_id' %in% names(dots)){
       setOrder(this, c(getOrder(this), dots[['primary_id']]))
@@ -235,7 +262,7 @@ tbl.Data <- function(this,
         base_cur <- substr(gsub("[\\./0-9]", "", ex), 1, 3)
         if(PARAMS('src') == 'bloomberg'){
           exchange_rate(this, ex, src = 'bloomberg', download = paste0(base_cur, counter_cur, " Curncy"), trade = FALSE)
-        }else if(PARAMS('src' == 'yahoo')){
+        }else if(PARAMS('src') == 'yahoo'){
           if(base_cur == 'USD'){
             exchange_rate(this, ex, src = 'yahoo', download = paste0(counter_cur, "=X"), trade = FALSE)
           }else{
@@ -295,7 +322,7 @@ tbl.Data <- function(this,
 #' @param this Data
 #' @param primary_id character
 #' @param currency character
-#' @param counter_currency character
+#' @param base_currency character
 #' @param tick_size numeric
 #' @param identifiers list
 #' @param assign_i logical
@@ -310,24 +337,25 @@ tbl.Data <- function(this,
 exchange_rate.Data <- function(this,
                                     primary_id = NULL,
                                     currency = NULL,
-                                    counter_currency = NULL,
+                                    base_currency = NULL,
                                     tick_size = 0.01,
                                     identifiers = NULL,
                                     assign_i = TRUE,
                                     overwrite = TRUE,
                                     multiplier =1,
+                                    trade = TRUE,
                                     ... ){
   tmp <- FinancialInstrument:::.instrument
   assignInNamespace(".instrument", this$envir, "FinancialInstrument")
   tryCatch({
-    if (is.null(primary_id) && !is.null(currency) && !is.null(counter_currency)) {
-      primary_id <- c(outer(counter_currency, currency, paste,
+    if (is.null(primary_id) && !is.null(currency) && !is.null(base_currency)) {
+      primary_id <- c(outer(base_currency, currency, paste,
                             sep = ""))
       same.same <- function(x) substr(x, 1, 3) == substr(x,
                                                          4, 6)
       primary_id <- primary_id[!same.same(primary_id)]
     }
-    else if (is.null(primary_id) && (is.null(currency) || is.null(counter_currency))) {
+    else if (is.null(primary_id) && (is.null(currency) || is.null(base_currency))) {
       stop(paste("Must provide either 'primary_id' or both",
                  "'currency' and 'counter_currency'"))
     }
@@ -342,23 +370,26 @@ exchange_rate.Data <- function(this,
     if (length(primary_id) > 1) {
       for(pr in primary_id){
         exchange_rate(this, pr, identifiers = identifiers, multiplier = multiplier,
-                      assign_i = assign_i, ... = ...)
+                      assign_i = assign_i, trade=trade, ... = ...)
       }
     }
     if (is.null(currency))
       currency <- substr(gsub("[\\./0-9]", "", primary_id), 4, 6)
-    if (is.null(counter_currency))
-      counter_currency <- substr(gsub("[\\./0-9]", "", primary_id), 1, 3)
+    if (is.null(base_currency))
+      base_currency <- substr(gsub("[\\./0-9]", "", primary_id), 1, 3)
     if (!exists(currency, where = this$envir, inherits = TRUE)) {
-      currency(this,currency)
+      currency(this, currency)
     }
-    if (!exists(counter_currency, where = this$envir, inherits = TRUE)) {
-      currency(this, counter_currency)
+    if (!exists(base_currency, where = this$envir, inherits = TRUE)) {
+      currency(this, base_currency)
     }
     FinancialInstrument::instrument(primary_id = primary_id, currency = currency,
                multiplier = multiplier, tick_size = tick_size, identifiers = identifiers,
-               ..., counter_currency = counter_currency, type = c("exchange_rate",
+               trade = trade,
+               ..., counter_currency = base_currency, type = c("exchange_rate",
                                                                   "currency"), assign_i = assign_i)
+    # browser()
+    add_exchange_rate(this, currency)
 
   },
   finally =
