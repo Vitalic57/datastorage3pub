@@ -3,6 +3,7 @@ instrument <- function (primary_id, ..., currency, multiplier=1, tick_size = NUL
                         trade = TRUE,
           identifiers = NULL, type = NULL, assign_i = FALSE, overwrite = TRUE)
 {
+  # print('inst')
   if (is.null(primary_id)) {
     stop("you must specify a primary_id for the instrument")
   }
@@ -30,11 +31,21 @@ instrument <- function (primary_id, ..., currency, multiplier=1, tick_size = NUL
       arg <- c(arg, targ)
     }
   }
-  if (!is.null(arg$src)) {
-    sarg <- list()
-    sarg[[primary_id]] <- arg$src
-    quantmod:::setSymbolLookup(sarg)
+  if(!'src' %in% names(arg)){
+    arg[['src']] <- PARAMS('src')
   }
+  if(!'update_src' %in% names(arg)){
+    arg[['update_src']] <- arg[['src']]
+  }
+  if(!'online_src' %in% names(arg)){
+    arg[['online_src']] <- arg[['update_src']]
+  }
+
+  # if (!is.null(arg$src)) {
+  #   sarg <- list()
+  #   sarg[[primary_id]] <- arg$src
+  #   quantmod:::setSymbolLookup(sarg)
+  # }
   ident_str <- tolower(c("X.RIC", "RIC", "CUSIP", "SEDOL",
                          "OSI", "Bloomberg", "Reuters", "ISIN", "CQG", "TT", "Yahoo",
                          "Google"))
@@ -114,8 +125,8 @@ add_exchange_rate <- function(this, counter){
   ex <- paste0(base_cur, counter_cur)
   for(ex_rate in ls_exchange_rates(this)){
     ex_rate <- getInstrument(this, ex_rate)
-    if(ex_rate$currency == counter_cur && ex_rate$counter_currency == base_cur ||
-       ex_rate$currency == base_cur && ex_rate$counter_currency == counter_cur){
+    if(ex_rate$currency == counter_cur && ex_rate$base_currency == base_cur ||
+       ex_rate$currency == base_cur && ex_rate$base_currency == counter_cur){
       return(invisible(NULL))
     }
   }
@@ -147,9 +158,7 @@ stock.Data <- function(this, ...){
   assignInNamespace(".instrument", this$envir, "FinancialInstrument")
   tryCatch({
     dots <- list(...)
-    if(!'src' %in% names(dots)){
-      dots[['src']] <- PARAMS('src')
-    }
+
     dots <- add_currency_to_dots(this, dots)
     add_exchange_rate(this, dots[['currency']])
     do.call(eval(parse(text = paste0('FinancialInstrument::',f))), args = dots)
@@ -181,9 +190,9 @@ index.Data <- function(this, ...){
   assignInNamespace(".instrument", this$envir, "FinancialInstrument")
   tryCatch({
     dots <- list(...)
-    if(!'src' %in% names(dots)){
-      dots[['src']] <- PARAMS('src')
-    }
+    # if(!'src' %in% names(dots)){
+    #   dots[['src']] <- PARAMS('src')
+    # }
     dots <- add_currency_to_dots(this, dots)
     add_exchange_rate(this, dots[['currency']])
     do.call('index_', args = dots)
@@ -347,6 +356,7 @@ exchange_rate.Data <- function(this,
                                     ... ){
   tmp <- FinancialInstrument:::.instrument
   assignInNamespace(".instrument", this$envir, "FinancialInstrument")
+  assignInNamespace("instrument", instrument, "FinancialInstrument")
   tryCatch({
     if (is.null(primary_id) && !is.null(currency) && !is.null(base_currency)) {
       primary_id <- c(outer(base_currency, currency, paste,
@@ -357,7 +367,7 @@ exchange_rate.Data <- function(this,
     }
     else if (is.null(primary_id) && (is.null(currency) || is.null(base_currency))) {
       stop(paste("Must provide either 'primary_id' or both",
-                 "'currency' and 'counter_currency'"))
+                 "'currency' and 'base_currency'"))
     }
     if (!isTRUE(overwrite) && isTRUE(assign_i) && any(in.use <- primary_id %in%
                                                       (li <- ls_instruments()))) {
@@ -380,13 +390,13 @@ exchange_rate.Data <- function(this,
     if (!exists(currency, where = this$envir, inherits = TRUE)) {
       currency(this, currency)
     }
-    if (!exists(base_currency, where = this$envir, inherits = TRUE)) {
-      currency(this, base_currency)
-    }
+    # if (!exists(base_currency, where = this$envir, inherits = TRUE)) {
+    #   currency(this, base_currency)
+    # }
     FinancialInstrument::instrument(primary_id = primary_id, currency = currency,
                multiplier = multiplier, tick_size = tick_size, identifiers = identifiers,
                trade = trade,
-               ..., counter_currency = base_currency, type = c("exchange_rate",
+               ..., base_currency = base_currency, type = c("exchange_rate",
                                                                   "currency"), assign_i = assign_i)
     # browser()
     add_exchange_rate(this, currency)

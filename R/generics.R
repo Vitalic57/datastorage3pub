@@ -415,6 +415,17 @@ cloneData <- function(this){
   UseMethod('cloneData', this)
 }
 
+#' Update Data object
+#'
+#' @param this Data
+#'
+#' @return Data object
+#' @export cloneData
+#' @rdname cloneData
+updateSymbols <- function(this){
+  UseMethod('updateSymbols', this)
+}
+
 #' Delay currency
 #'
 #' @param this Data

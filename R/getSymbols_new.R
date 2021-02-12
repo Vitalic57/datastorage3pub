@@ -35,7 +35,7 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
         }
         rate <- this$exchange_rates[[info[['ex_rate']]]]
         rate <- cbind(rate, y) %>% .[,1] %>% na.locf  %>% {.[index(y)]}
-        if(getInstrument(this, info[['ex_rate']])[['counter_currency']] == info[['currency']]){
+        if(getInstrument(this, info[['ex_rate']])[['base_currency']] == info[['currency']]){
           y <- y * drop(rate)
         }else{
           y <- y / drop(rate)
@@ -84,7 +84,7 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
       }else{
         nontraded[[info$primary_id]] <- x
       }
-      this$exchange_rates[[paste0(info$counter_currency, info$currency)]] <- Cl(x)
+      this$exchange_rates[[paste0(info$base_currency, info$currency)]] <- Cl(x)
     }
     ##############################################################################################################
     # creation of main tables
@@ -278,12 +278,12 @@ add_tables <- function(this, ...){
                           }
                           rate <- this$exchange_rates[[rate_name]]
                           rate <- cbind(rate, y) %>% .[,1] %>% na.locf  %>% {.[index(y)]}
-                          if(getInstrument(this, rate_name)[['counter_currency']] == current_cur[i]){
+                          if(getInstrument(this, rate_name)[['base_currency']] == current_cur[i]){
                             y <- y * drop(rate)
                             current_cur[i] <<- getInstrument(this, rate_name)[['currency']]
                           }else{
                             y <- y / drop(rate)
-                            current_cur[i] <<- getInstrument(this, rate_name)[['counter_currency']]
+                            current_cur[i] <<- getInstrument(this, rate_name)[['base_currency']]
                           }
                           if(has.Vo(results[[i]])){
                             results[[i]] <<- cbind(y, Vo(results[[i]]))
@@ -306,12 +306,12 @@ add_tables <- function(this, ...){
                         }
                         rate <- this$exchange_rates[[info[['ex_rate']][[cur_num]]]]
                         rate <- cbind(rate, y) %>% .[,1] %>% na.locf  %>% {.[index(y)]}
-                        if(getInstrument(this, info[['ex_rate']][[cur_num]])[['counter_currency']] == current_cur){
+                        if(getInstrument(this, info[['ex_rate']][[cur_num]])[['base_currency']] == current_cur){
                           y <- y * drop(rate)
                           current_cur <- getInstrument(this, info[['ex_rate']][[cur_num]])[['currency']]
                         }else{
                           y <- y / drop(rate)
-                          current_cur <- getInstrument(this, info[['ex_rate']][[cur_num]])[['counter_currency']]
+                          current_cur <- getInstrument(this, info[['ex_rate']][[cur_num]])[['base_currency']]
                         }
                         if(has.Vo(results)){
                           results <- cbind(y, Vo(results))

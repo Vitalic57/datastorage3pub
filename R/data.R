@@ -11,6 +11,7 @@ data_from_list_xts <- function(l,
                                na_omit = TRUE,
                                na_locf = TRUE,
                                columns = c('Cl', 'Ad', 'Vo', 'Di', 'Sp')){
+  # browser()
   f <- . %>% Reduce('cbind', .)
   if(names_from_list){
     f <- . %>% Reduce('cbind', .) %>% set_colnames(names(l))
@@ -128,7 +129,13 @@ data_from_list_xts <- function(l,
       }, error = function(e){
         DEFAULT_DIV
       })
-    }) %>% f %>% na.fill(DEFAULT_DIV)
+    })
+    if(any(sapply(dividends, function(x) length(x) > 1))){
+      dividends %>% f %>% na.fill(DEFAULT_DIV)
+    }else{
+      dividends <- NULL
+    }
+
   }else{
     dividends <- NULL
   }
@@ -140,7 +147,12 @@ data_from_list_xts <- function(l,
       }, error = function(e){
         DEFAULT_SPLIT
       })
-    }) %>% f %>% na.fill(DEFAULT_SPLIT)
+    })
+    if(any(sapply(splits, function(x) length(x) > 1))){
+      splits %>% f %>% na.fill(DEFAULT_SPLIT)
+    }else{
+      splits <- NULL
+    }
   }else{
     splits <- NULL
   }

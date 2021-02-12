@@ -17,7 +17,6 @@ currency.Data <- function(this, ...){
   },
   finally =
     assignInNamespace('.instrument', tmp, 'FinancialInstrument'))
-  return(invisible(this))
 }
 
 #' rm_instruments
@@ -37,7 +36,6 @@ rm_instruments.Data <- function(this, ...){
   },
   finally =
     assignInNamespace('.instrument', tmp, 'FinancialInstrument'))
-  return(invisible(this))
 }
 
 #' instrument_attr
@@ -76,7 +74,6 @@ add.identifier.Data <- function(this, ...){
   },
   finally =
     assignInNamespace('.instrument', tmp, 'FinancialInstrument'))
-  return(invisible(this))
 }
 
 #' ls_stocks
@@ -207,6 +204,25 @@ buildHierarchy.Data <- function(this, ...){
   assignInNamespace('.instrument', this$envir, 'FinancialInstrument')
   tryCatch({
     FinancialInstrument::buildHierarchy(...)
+  },
+  finally =
+    assignInNamespace('.instrument', tmp, 'FinancialInstrument'))
+}
+
+#' instrument_attr
+#'
+#' instrument_attr from FinancialInstrument library
+#'
+#' @param this Data
+#'
+#' @rdname instrument_attr
+#' @method instrument_attr Data
+#' @export
+instrument_attr.Data <- function(this, ...){
+  tmp <- FinancialInstrument:::.instrument
+  assignInNamespace('.instrument', this$envir, 'FinancialInstrument')
+  tryCatch({
+    FinancialInstrument::instrument_attr(...)
   },
   finally =
     assignInNamespace('.instrument', tmp, 'FinancialInstrument'))

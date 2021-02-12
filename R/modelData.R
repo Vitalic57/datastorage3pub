@@ -298,12 +298,15 @@ rm_data.Data <- function(this){
 #' @method cloneData Data
 #' @export
 cloneData.Data <- function(this){
-  e <-  this %>%
-    ls %>%
-    mget(.,envir = this) %>%
-    as.environment
-  class(e) <- append("Data",class(e))
-  return(e)
+  # e <-  this %>%
+  #   ls %>%
+  #   mget(.,envir = this) %>%
+  #   as.environment
+  # class(e) <- append("Data",class(e))
+  # return(e)
+  temp <- tempfile()
+  saveRDS(this, temp)
+  return(readRDS(temp))
 }
 
 
