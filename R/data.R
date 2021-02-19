@@ -121,17 +121,20 @@ data_from_list_xts <- function(l,
   }else{
     low <- NULL
   }
-
+  # browser()
   if('Di' %in% columns){
+    in_div <- FALSE
     dividends <- lapply(l, function(x){
       tryCatch({
-        Di(x)
+        x <- Di(x)
+        in_div <<- TRUE
+        x
       }, error = function(e){
         DEFAULT_DIV
       })
     })
-    if(any(sapply(dividends, function(x) length(x) > 1))){
-      dividends %>% f %>% na.fill(DEFAULT_DIV)
+    if(in_div){
+      dividends <- dividends %>% f %>% na.fill(DEFAULT_DIV)
     }else{
       dividends <- NULL
     }
@@ -141,15 +144,18 @@ data_from_list_xts <- function(l,
   }
 
   if('Sp' %in% columns){
+    in_split <- FALSE
     splits <- lapply(l, function(x){
       tryCatch({
-        Sp(x)
+        x <- Sp(x)
+        in_split <<- TRUE
+        x
       }, error = function(e){
         DEFAULT_SPLIT
       })
     })
-    if(any(sapply(splits, function(x) length(x) > 1))){
-      splits %>% f %>% na.fill(DEFAULT_SPLIT)
+    if(in_split){
+      splits <- splits %>% f %>% na.fill(DEFAULT_SPLIT)
     }else{
       splits <- NULL
     }

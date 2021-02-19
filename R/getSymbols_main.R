@@ -1,16 +1,3 @@
-#' Get data for Data object
-#'
-#' @param this Data
-#' @param version character, heavy or light
-#' @param ... arguments for functions getSymbols_heavy and getSymbols_light
-#'
-#' @return Data
-#' @export
-getSymbols.Data <- function(this, version = 'light',...){
-  do.call(paste0('getSymbols_', version), args=c(list(this), list(...)))
-}
-
-
 download_instrument <- function(this, name, from, to, ...){
   info <- getInstrument(this, name)
   ids <- c(info$download, info$identifiers %>% unlist, info$primary_id)
@@ -62,6 +49,46 @@ download_instrument <- function(this, name, from, to, ...){
   return(x)
 }
 
+
+download_instrument_last <- function(this, name, ...){
+  info <- getInstrument(this, name)
+  ids <- c(info$download, info$identifiers %>% unlist, info$primary_id)
+
+  if('days_to_expir' %in% names(info)){
+    days_to_expir <- info$days_to_expir
+  }else{
+    days_to_expir <- NULL
+  }
+  if('contracts' %in% names(info)){
+    contracts <- info$contracts
+  }else{
+    contracts <- NULL
+  }
+  dots <- list(...)
+  # download symbols
+  for(id in ids){
+    tryCatch({
+      args <- list(Symbols = id,
+                   src = info$src,
+                   auto.assign = FALSE,
+                   contracts=contracts,
+                   days_to_expir = days_to_expir
+      )
+      args <- c(args, dots)
+      if('args_getSymbols' %in% names(info)){
+        args <- c(args, info$args_getSymbols)
+        args[duplicated(names(args), fromLast = TRUE)] <- NULL
+      }
+      x <- do.call('getLast', args = args)
+      break
+    }, error = function(e){
+      print(e)
+    })
+  }
+  return(x)
+}
+
+
 is_without_args <- function(f){
   if(is.function(f)){
     return(is.null(formals(f)))
@@ -80,7 +107,7 @@ is_without_args <- function(f){
 #'
 #' @return Data
 #' @export
-getSymbols.Data <- function(this, version = NULL,...){
+getSymbols.Data <- function(this, version = NULL, download_fun=download_instrument, ...){
   if(is.null(version)){
     version <- PARAMS('getSymbols_version')
   }
@@ -97,7 +124,7 @@ getSymbols.Data <- function(this, version = NULL,...){
     dots[[name]] <- eval(dots[[name]])
   }
   do.call(paste0('getSymbols_', version),
-          args=c(list(this), list(...), dots))
+          args=c(list(this, download_fun=download_fun), list(...), dots))
 }
 
 

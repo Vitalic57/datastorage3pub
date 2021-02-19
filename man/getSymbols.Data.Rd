@@ -4,9 +4,7 @@
 \alias{getSymbols.Data}
 \title{Get data for Data object}
 \usage{
-\method{getSymbols}{Data}(this, version = NULL, ...)
-
-\method{getSymbols}{Data}(this, version = NULL, ...)
+\method{getSymbols}{Data}(this, version = NULL, download_fun = download_instrument, ...)
 }
 \arguments{
 \item{this}{Data}
@@ -17,11 +15,7 @@
 }
 \value{
 Data
-
-Data
 }
 \description{
-Get data for Data object
-
 Get data for Data object
 }

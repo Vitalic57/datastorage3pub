@@ -8,7 +8,8 @@
 #' @export
 #'
 #' @examples
-getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
+getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download_instrument, ...){
+  # browser()
   dots <- list(...)
   if(prices){
     instruments <- sapply(c(ls_stocks, ls_indexes), function(x) this %>% x) %>% unlist
@@ -21,10 +22,10 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
 
       if(!is.null(info[['ex_rate']])){
         if(!info[['ex_rate']] %in% names(this$exchange_rates)){
-          this$exchange_rates[[info[['ex_rate']]]] <- download_instrument(this, info[['ex_rate']], ...) %>% Cl
+          this$exchange_rates[[info[['ex_rate']]]] <- download_fun(this, info[['ex_rate']], ...) %>% Cl
         }
       }
-      x <- download_instrument(this, instr, add.actions = TRUE, ...)
+      x <- download_fun(this, instr, add.actions = TRUE, ...)
       if(!is.null(info[['ex_rate']])){
         y <- x
         if(has.Vo(x)){
@@ -71,7 +72,7 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, ...){
     for(instr in instruments){
       info <- getInstrument(this, instr)
 
-      x <- download_instrument(this, instr, add.actions = FALSE, ...)
+      x <- download_fun(this, instr, add.actions = FALSE, ...)
 
       inds <- c(has.Op(x, which = TRUE),
                 has.Hi(x, which = TRUE),

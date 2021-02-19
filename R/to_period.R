@@ -31,8 +31,16 @@ period2xts <- function(period){
 
 #' @export
 to.period2 <- function(x, period, k = 1){
+  # browser()
+  name <- NULL
+  tryCatch({
+    name <- colnames(x)[1] %>% strsplit('\\.') %>% .[[1]] %>% head(-1) %>% paste(collapse = '.')
+  }, error = function(e){
+  })
+
   period <- period2xts(period)
-  res <- to.period(x, period = period, k = k, name = FALSE)
+  res <- to.period(x, period = period, k = k, name = name)
+  res <- res[, intersect(colnames(x), colnames(res))]
   if(has.Sp(x) || has.Di(x)){
     ep <- endpoints(x, on = period, k = k)
   }

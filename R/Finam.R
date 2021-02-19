@@ -263,7 +263,7 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
           if(is.xts(fr) && period %in% c('day','week','month')){
             dates <- as.POSIXct(paste0(index(fr), " ","19:00"),
                                 tz = "", format = "%Y-%m-%d %H:%M")
-            index(fr) <- dates
+            index(fr) <- as.Date(dates)
           }
         }
         if (auto.assign){

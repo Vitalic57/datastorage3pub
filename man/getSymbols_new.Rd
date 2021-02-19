@@ -4,7 +4,13 @@
 \alias{getSymbols_new}
 \title{Get data}
 \usage{
-getSymbols_new(this, prices = TRUE, tables = TRUE, ...)
+getSymbols_new(
+  this,
+  prices = TRUE,
+  tables = TRUE,
+  download_fun = download_instrument,
+  ...
+)
 }
 \arguments{
 \item{this}{Data}

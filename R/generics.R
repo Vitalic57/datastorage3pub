@@ -409,7 +409,7 @@ rm_data <- function(this){
 #' @param this Data
 #'
 #' @return Data object
-#' @export cloneData
+#' @export
 #' @rdname cloneData
 cloneData <- function(this){
   UseMethod('cloneData', this)
@@ -420,11 +420,37 @@ cloneData <- function(this){
 #' @param this Data
 #'
 #' @return Data object
-#' @export cloneData
-#' @rdname cloneData
+#' @export
+#' @rdname updateSymbols
 updateSymbols <- function(this){
   UseMethod('updateSymbols', this)
 }
+
+
+#' Update last point in Data object
+#'
+#' @param this Data
+#'
+#' @return Data object
+#' @export
+#' @rdname updateLast
+updateLast <- function(this){
+  UseMethod('updateLast', this)
+}
+
+
+#' Get last point from soures
+#'
+#' @param Symbols Data / character
+#' @param ... params
+#'
+#' @return xts / Data
+#' @rdname getLast
+#' @export
+getLast <- function(Symbols, ...){
+  UseMethod('getLast', Symbols)
+}
+
 
 #' Delay currency
 #'

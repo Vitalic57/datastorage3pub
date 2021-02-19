@@ -5,10 +5,14 @@
 \title{instrument_attr}
 \usage{
 \method{instrument_attr}{Data}(this, ...)
+
+\method{instrument_attr}{Data}(this, ...)
 }
 \arguments{
 \item{this}{Data}
 }
 \description{
+instrument_attr from FinancialInstrument library
+
 instrument_attr from FinancialInstrument library
 }
