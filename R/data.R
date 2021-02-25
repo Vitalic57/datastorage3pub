@@ -203,6 +203,7 @@ data_from_list_xts <- function(l,
   }else{
     warning('Price table is not specified')
   }
+  data %>% stock(data$colnames)
   return(data)
 }
 
@@ -213,10 +214,15 @@ data_from_list_xts <- function(l,
 #' @return Data
 #' @export
 data_from_xts <- function(x, ...){
+  nms <- colnames(x)
+  if(is.null(nms)){
+    nms <- paste0('x', 1:ncol(x))
+  }
   data_from_list_xts(lapply(seq_len(ncol(x)), function(i){
     y <- x[,i]
-    if(!(has.Cl(y) || has.Ad(y))){
-      colnames(y) <- paste0(colnames(y), '.Adjusted')
+    if(!has.Ad(y)){
+      colnames(y) <- paste0(nms[i], '.Adjusted')
     }
-  }) %>% set_names(colnames(x)) , columns = c('Ad', 'Cl'), candles = FALSE, names_from_list = TRUE)
+    y
+  }) %>% set_names(nms) , columns = 'Ad', candles = FALSE, names_from_list = TRUE)
 }

@@ -12,15 +12,29 @@ exchange_to_counter <- function(this, table, inds){
   }
   nms <- colnames(table)
   for(i in seq_len(ncol(table))){
-    inst <- getInstrument(this, nms[i])
-    if(inst$currency == this$currency){
-      next
-    }
-    if(paste0(inst$currency, this$currency) %in% names(this$exchange_rates)){
-      table[,i] <- table[,i] * this$exchange_rates[[paste0(inst$currency, this$currency)]][inds,,drop=FALSE]
-    }else{
-      table[,i] <- table[,i] / this$exchange_rates[[paste0(this$currency, inst$currency)]][inds,,drop=FALSE]
-    }
+    tryCatch({
+      inst <- getInstrument(this, nms[i])
+      if(inst$currency == this$currency){
+        next
+      }
+      if(paste0(inst$currency, this$currency) %in% names(this$exchange_rates)){
+        table[,i] <- table[,i] * this$exchange_rates[[paste0(inst$currency, this$currency)]][inds,,drop=FALSE]
+      }else{
+        table[,i] <- table[,i] / this$exchange_rates[[paste0(this$currency, inst$currency)]][inds,,drop=FALSE]
+      }
+    },
+    warning = function(w){
+    })
   }
   return(table)
 }
+
+a <- 0
+tryCatch({
+  a <- -1
+  warning('asd')
+  a <- 1
+},
+warning = function(w){
+
+})
