@@ -45,7 +45,7 @@ data_from_list_xts <- function(l,
 
   l <- lapply(l, function(x){
     if(!is.null(data)){
-      to.period2(x[dates], period = data$._period, k = data$._freq)
+      to.period3(x[dates], period = data$._period)
     }else{
       x[dates]
     }

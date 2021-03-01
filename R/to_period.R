@@ -23,7 +23,7 @@ period2xts <- function(period){
                      'months'
                    },
                    default = {
-                     period
+                     NULL
                    }
   )
   return(period)
@@ -51,6 +51,32 @@ to.period2 <- function(x, period, k = 1){
     res <- cbind(res, period.prod(Sp(x), INDEX = ep))
   }
   return(res %>% set_colnames(colnames(x)))
+}
+
+#' @export
+to.period3 <- function(x, period){
+  if(is.numeric(period)){
+    return(to.period2(x, 'minutes', period))
+  }
+  new_period <- period2xts(period)
+  if(!is.null(new_period)){
+    return(to.period2(x, new_period, 1))
+  }
+  if(period == '1min'){
+    return(to.period2(x, 'minutes', 1))
+  }else if(period == '5min'){
+    return(to.period2(x, 'minutes', 5))
+  }else if(period == '10min'){
+    return(to.period2(x, 'minutes', 10))
+  }else if(period == '15min'){
+    return(to.period2(x, 'minutes', 15))
+  }else if(period == '15min'){
+    return(to.period2(x, 'minutes', 15))
+  }else if(period == '30min'){
+    return(to.period2(x, 'minutes', 30))
+  }
+  stop(paste0('No such period ', period))
+  # if(period)
 }
 
 

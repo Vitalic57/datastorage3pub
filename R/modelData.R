@@ -41,10 +41,11 @@ Data <- function(){
 #' @rdname getBuildPeriod
 #' @method getBuildPeriod Data
 getBuildPeriod.Data <- function(this, recalc = FALSE){
-  if(is.null(this$._period_build) || recalc){
-    this$._period_build <- calcActualPeriod(this$._period, this$._freq)
-  }
-  return(this$._period_build)
+  # if(is.null(this$._period_build) || recalc){
+  #   this$._period_build <- calcActualPeriod(this$._period, this$._freq)
+  # }
+  # return(this$._period_build)
+  return(this$._period)
 }
 
 #' Sets period for building spread from storage
@@ -178,29 +179,37 @@ modify.Data <- function(this, ...){
              })
            },
            period = {
-             data <- period2xts(eval(data, envir = parent.frame()))
-             if(is.null(data)){
-               stop('no such period')
+             if(is.numeric(data)){
+               period <- abs(trunc(data))
+               if(period == 0){
+                 stop('Period should be more than 0')
+               }
              }
              this$._period <- data
-             this$._period_build <- getBuildPeriod(this, recalc = TRUE)
+             # data <- period2xts(eval(data, envir = parent.frame()))
+             # if(is.null(data)){
+             #   stop('no such period')
+             # }
+             # this$._period <- data
+             # this$._period_build <- getBuildPeriod(this, recalc = TRUE)
+
            },
-           build_period = ,
-           period_build = {
-             stopifnot(data %in% periods)
-             this$._period_build <- data
-           },
+           # build_period = ,
+           # period_build = {
+           #   stopifnot(data %in% periods)
+           #   this$._period_build <- data
+           # },
            currency = {
              this$currency <- eval(data, envir = parent.frame()) %>% toupper
            },
-           freq = {
-             data <- eval(data, envir = parent.frame())
-             if(!is.numeric(data)){
-               stop('freq must be numeric')
-             }
-             this$._freq <- data
-             this$._period_build <- getBuildPeriod(this, recalc = TRUE)
-           },
+           # freq = {
+           #   data <- eval(data, envir = parent.frame())
+           #   if(!is.numeric(data)){
+           #     stop('freq must be numeric')
+           #   }
+           #   this$._freq <- data
+           #   this$._period_build <- getBuildPeriod(this, recalc = TRUE)
+           # },
            from = {
              this$from <- call('as.Date', data)
            },
