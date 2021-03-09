@@ -35,9 +35,24 @@ data_from_list_xts <- function(l,
       }
     }
 
-  dates <- l %>% lapply(function(x) x[,1]) %>% Reduce('cbind', .)  %>%
-    g %>%
-    index
+  # dates <- l %>% lapply(function(x) x[,1]) %>% Reduce('cbind', .)  %>%
+  #   g %>%
+  #   index
+  dates_class <- l[[1]] %>% index %>% class
+  if(na_omit){
+    dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(intersect, .) # %>% as.Date
+  }else{
+    dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(union, .)
+  }
+  if(dates_class[1] == 'Date'){
+    dates <- as.Date(dates)
+  }
+  if(dates_class[1] == 'POSIXct'){
+    dates <- as.POSIXct(dates)
+  }
+  if(dates_class[1] == 'POSIXlt'){
+    dates <- as.POSIXlt(dates)
+  }
 
   l <- lapply(l, function(x){
     merge(x, dates) %>% g %>% .[dates]
