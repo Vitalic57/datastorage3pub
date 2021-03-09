@@ -57,14 +57,12 @@ data_from_list_xts <- function(l,
   l <- lapply(l, function(x){
     merge(x, dates) %>% g %>% .[dates]
   })
-
-  l <- lapply(l, function(x){
-    if(!is.null(data)){
+  if(!is.null(data)){
+    l <- lapply(l, function(x){
       to.period3(x[dates], period = data$._period)
-    }else{
-      x[dates]
-    }
-  })
+    })
+  }
+
   if(is.null(data)){
     data <- Data()
     data$columns <- columns
@@ -73,6 +71,8 @@ data_from_list_xts <- function(l,
   if(candles){
     data$candles <- l
   }
+  n <- length(dates)
+  l <- lapply(l, coredata)
   if('Ad' %in% columns){
     adjusted <- lapply(l, function(x){
       tryCatch({
@@ -81,7 +81,7 @@ data_from_list_xts <- function(l,
         tryCatch({
           Cl(x)
         }, error = function(e){
-          NA
+          rep(NA, n)
         })
       })
     }) %>% f
@@ -94,7 +94,7 @@ data_from_list_xts <- function(l,
       tryCatch({
         Cl(x)
       }, error = function(e){
-        NA
+        rep(NA, n)
       })
     }) %>% f
   }else{
@@ -106,7 +106,7 @@ data_from_list_xts <- function(l,
       tryCatch({
         Op(x)
       }, error = function(e){
-        NA
+        rep(NA, n)
       })
     }) %>% f
   }else{
@@ -118,7 +118,7 @@ data_from_list_xts <- function(l,
       tryCatch({
         Hi(x)
       }, error = function(e){
-        NA
+        rep(NA, n)
       })
     }) %>% f
   }else{
@@ -130,7 +130,7 @@ data_from_list_xts <- function(l,
       tryCatch({
         Lo(x)
       }, error = function(e){
-        NA
+        rep(NA, n)
       })
     }) %>% f
   }else{
@@ -145,7 +145,8 @@ data_from_list_xts <- function(l,
         in_div <<- TRUE
         x
       }, error = function(e){
-        DEFAULT_DIV
+        rep(DEFAULT_DIV, n)
+
       })
     })
     if(in_div){
@@ -166,7 +167,8 @@ data_from_list_xts <- function(l,
         in_split <<- TRUE
         x
       }, error = function(e){
-        DEFAULT_SPLIT
+        rep(DEFAULT_SPLIT, n)
+
       })
     })
     if(in_split){
@@ -183,31 +185,24 @@ data_from_list_xts <- function(l,
       tryCatch({
         Vo(x)
       }, error = function(e){
-        DEFAULT_VOLUME
+        rep(DEFAULT_VOLUME, n)
       })
     }) %>% f
   }else{
     volume <- NULL
   }
 
-
-  data$series <- list()
   data$mat <- list()
 
+  data$mat$adjusted <- adjusted
+  data$mat$close <- close
+  data$mat$dividends <- dividends
+  data$mat$splits <- splits
+  data$mat$open <- open
+  data$mat$high <- high
+  data$mat$low <- low
 
-  data$series$adjusted <- adjusted
-  data$series$close <- close
-  data$series$dividends <- dividends
-  data$series$splits <- splits
-  data$series$open <- open
-  data$series$high <- high
-  data$series$low <- low
-
-  for(name in names(data$series)){
-    data$mat[[name]] <- coredata(data$series[[name]])
-  }
-  data$series <- NULL
-  data$dates <- index(l[[1]])
+  data$dates <- dates
   data$nrow <- nrow.Data(data)
   data$ncol <- ncol.Data(data)
   data$colnames <- colnames.Data(data)
