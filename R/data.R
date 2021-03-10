@@ -76,12 +76,12 @@ data_from_list_xts <- function(l,
   if('Ad' %in% columns){
     adjusted <- lapply(l, function(x){
       tryCatch({
-        Ad(x)
+        Ad(x) %>% cbind
       }, error = function(e){
         tryCatch({
-          Cl(x)
+          Cl(x) %>% cbind
         }, error = function(e){
-          rep(NA, n)
+          rep(NA, n) %>% cbind
         })
       })
     }) %>% f
@@ -92,9 +92,9 @@ data_from_list_xts <- function(l,
   if('Cl' %in% columns){
     close <- lapply(l, function(x){
       tryCatch({
-        Cl(x)
+        Cl(x) %>% cbind
       }, error = function(e){
-        rep(NA, n)
+        rep(NA, n) %>% cbind
       })
     }) %>% f
   }else{
@@ -104,9 +104,9 @@ data_from_list_xts <- function(l,
   if('Op' %in% columns){
     open <- lapply(l, function(x){
       tryCatch({
-        Op(x)
+        Op(x) %>% cbind
       }, error = function(e){
-        rep(NA, n)
+        rep(NA, n) %>% cbind
       })
     }) %>% f
   }else{
@@ -116,9 +116,9 @@ data_from_list_xts <- function(l,
   if('Hi' %in% columns){
     high <- lapply(l, function(x){
       tryCatch({
-        Hi(x)
+        Hi(x) %>% cbind
       }, error = function(e){
-        rep(NA, n)
+        rep(NA, n) %>% cbind
       })
     }) %>% f
   }else{
@@ -128,9 +128,9 @@ data_from_list_xts <- function(l,
   if('Lo' %in% columns){
     low <- lapply(l, function(x){
       tryCatch({
-        Lo(x)
+        Lo(x) %>% cbind
       }, error = function(e){
-        rep(NA, n)
+        rep(NA, n) %>% cbind
       })
     }) %>% f
   }else{
@@ -141,11 +141,11 @@ data_from_list_xts <- function(l,
     in_div <- FALSE
     dividends <- lapply(l, function(x){
       tryCatch({
-        x <- Di(x)
+        x <- Di(x) %>% cbind
         in_div <<- TRUE
         x
       }, error = function(e){
-        rep(DEFAULT_DIV, n)
+        rep(DEFAULT_DIV, n) %>% cbind
 
       })
     })
@@ -163,11 +163,11 @@ data_from_list_xts <- function(l,
     in_split <- FALSE
     splits <- lapply(l, function(x){
       tryCatch({
-        x <- Sp(x)
+        x <- Sp(x) %>% cbind
         in_split <<- TRUE
         x
       }, error = function(e){
-        rep(DEFAULT_SPLIT, n)
+        rep(DEFAULT_SPLIT, n) %>% cbind
 
       })
     })
@@ -183,9 +183,9 @@ data_from_list_xts <- function(l,
   if('Vo' %in% columns){
     volume <- lapply(l, function(x){
       tryCatch({
-        Vo(x)
+        Vo(x) %>% cbind
       }, error = function(e){
-        rep(DEFAULT_VOLUME, n)
+        rep(DEFAULT_VOLUME, n) %>% cbind
       })
     }) %>% f
   }else{

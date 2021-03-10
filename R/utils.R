@@ -14,17 +14,20 @@ shrink_by_ind <- function(data, start_ind, end_ind, copy=TRUE){
   }else{
     res <- data
   }
-  for(block in c('series', 'mat')){
+  for(block in c('mat')){
+    res[[block]] <- list()
     for(name in names(data[[block]])){
-      res[[name]] <- data[[block]][[name]][start_ind:end_ind,]
+      res[[block]][[name]] <- data[[block]][[name]][start_ind:end_ind,,drop=FALSE]
     }
   }
   for(name in names(data)){
-    if(name %in% c('series', 'mat')){
+    if(name %in% c('mat', 'dates')){
       next
     }
     res[[name]] <- data[[name]]
   }
+  res[['dates']] <- data[['dates']][start_ind:end_ind]
+  res[['nrow']] <- end_ind - start_ind + 1
 
   return(invisible(res))
 }
