@@ -201,6 +201,7 @@ data_from_list_xts <- function(l,
   data$mat$open <- open
   data$mat$high <- high
   data$mat$low <- low
+  data$mat$volume <- volume
 
   data$dates <- dates
   data$nrow <- nrow.Data(data)
