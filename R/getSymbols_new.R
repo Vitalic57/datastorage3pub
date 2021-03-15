@@ -15,6 +15,11 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
     instruments <- sapply(c(ls_stocks, ls_indexes), function(x) this %>% x) %>% unlist
     trade_inst <- list()
     nontraded <- list()
+    if('Di' %in% this$columns || 'Sp' %in% this$columns){
+      add.actions <- TRUE
+    }else{
+      add.actions <- FALSE
+    }
 
     # download and sort symbols ---------------------------------------------------------------------------------
     for(instr in instruments){
@@ -25,7 +30,7 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
           this$exchange_rates[[info[['ex_rate']]]] <- download_fun(this, info[['ex_rate']], ...) %>% Cl
         }
       }
-      x <- download_fun(this, instr, add.actions = TRUE, ...)
+      x <- download_fun(this, instr, add.actions = add.actions, ...)
       if(!is.null(info[['ex_rate']])){
         y <- x
         if(has.Vo(x)){
