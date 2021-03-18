@@ -41,11 +41,6 @@ instrument <- function (primary_id, ..., currency, multiplier=1, tick_size = NUL
     arg[['online_src']] <- arg[['update_src']]
   }
 
-  # if (!is.null(arg$src)) {
-  #   sarg <- list()
-  #   sarg[[primary_id]] <- arg$src
-  #   quantmod:::setSymbolLookup(sarg)
-  # }
   ident_str <- tolower(c("X.RIC", "RIC", "CUSIP", "SEDOL",
                          "OSI", "Bloomberg", "Reuters", "ISIN", "CQG", "TT", "Yahoo",
                          "Google"))

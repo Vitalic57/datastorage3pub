@@ -62,10 +62,11 @@ data_from_list_xts <- function(l,
       to.period3(x[dates], period = data$._period)
     })
   }
-
+  data_was_null <- FALSE
   if(is.null(data)){
     data <- Data()
     data$columns <- columns
+    data_was_null <- TRUE
   }
   columns <- data$columns
   if(candles){
@@ -207,6 +208,9 @@ data_from_list_xts <- function(l,
   data$nrow <- nrow.Data(data)
   data$ncol <- ncol.Data(data)
   data$colnames <- colnames.Data(data)
+  if(data_was_null){
+    data %>% stock(data$colnames)
+  }
   if('close' %in% names(data$mat)){
     data$price_table <- which(names(data$mat) == 'close')
   }else if('adjusted' %in% names(data$mat)){
@@ -214,7 +218,7 @@ data_from_list_xts <- function(l,
   }else{
     warning('Price table is not specified')
   }
-  data %>% stock(data$colnames)
+
   return(data)
 }
 
