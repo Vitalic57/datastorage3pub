@@ -326,9 +326,10 @@ getSymbols.Finam <- function(Symbols, from = Sys.Date() - 1000, to = Sys.Date(),
           part <- part + 1
         }
       }
+      # browser()
       x <- parts %>% Reduce(function(x, y){
-        rbind(x[paste0('/', index(y)[1] - 1)], y)
-      }, ., right = TRUE)
+        rbind(y[paste0('/', index(x)[1] - 1)], x)
+      }, .)
       if(length(Symbols) > 1 || auto.assign){
         assign(Symbol, x, env)
       }else{
