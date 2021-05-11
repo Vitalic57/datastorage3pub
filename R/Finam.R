@@ -326,10 +326,13 @@ getSymbols.Finam <- function(Symbols, from = Sys.Date() - 1000, to = Sys.Date(),
           part <- part + 1
         }
       }
+      x <- parts %>% Reduce(function(x, y){
+        rbind(x[paste0('/', index(y)[1] - 1)], y)
+      }, ., right = TRUE)
       if(length(Symbols) > 1 || auto.assign){
-        assign(Symbol, parts %>% Reduce('rbind', .), env)
+        assign(Symbol, x, env)
       }else{
-        return(parts %>% Reduce('rbind', .))
+        return(x)
       }
     }
   })
