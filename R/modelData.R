@@ -185,7 +185,7 @@ modify.Data <- function(this, ...){
                  stop('Period should be more than 0')
                }
              }
-             this$._period <- data
+             this$._period <- eval(data, envir = parent.frame())
              # data <- period2xts(eval(data, envir = parent.frame()))
              # if(is.null(data)){
              #   stop('no such period')
