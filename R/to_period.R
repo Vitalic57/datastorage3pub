@@ -44,13 +44,15 @@ to.period2 <- function(x, period, k = 1){
   if(has.Sp(x) || has.Di(x)){
     ep <- endpoints(x, on = period, k = k)
   }
-  if(has.Di(x)){
-    res <- cbind(res, period.sum(Di(x), INDEX = ep))
+  ind_div <- has.Di(x, which = TRUE)
+  if(ind_div > 0){
+    res <- cbind(res, period.sum(Di(x), INDEX = ep)) %>% set_colnames(c(colnames(res), colnames(x)[ind_div]))
   }
-  if(has.Sp(x)){
-    res <- cbind(res, period.prod(Sp(x), INDEX = ep))
+  ind_spl <- has.Sp(x, which = TRUE)
+  if(ind_spl > 0){
+    res <- cbind(res, period.prod(Sp(x), INDEX = ep))  %>% set_colnames(c(colnames(res), colnames(x)[ind_spl]))
   }
-  return(res %>% set_colnames(colnames(x)))
+  return(res)
 }
 
 #' @export

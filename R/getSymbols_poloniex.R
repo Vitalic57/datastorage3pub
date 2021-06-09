@@ -16,7 +16,7 @@ getSymbols.Poloniex <- function(Symbols, env, return.class = "xts",
     verbose <- FALSE
   if (missing(auto.assign))
     auto.assign <- FALSE
-  if(is.numeric(p)){
+  if(is.numeric(period)){
     p <- p * 60
   }else{
     p <- 0
