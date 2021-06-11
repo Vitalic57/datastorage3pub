@@ -290,6 +290,11 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
 
 #' @export getSymbols.Finam
 getSymbols.Finam <- function(Symbols, from = Sys.Date() - 1000, to = Sys.Date(), auto.assign = FALSE, env, ...){
+  load_by_parts(Symbols=Symbols, from = from, to = to, auto.assign = auto.assign, env=env, fun=getSymbols.Finam_, ...)
+}
+
+
+load_by_parts <- function(Symbols, from = Sys.Date() - 1000, to = Sys.Date(), auto.assign = FALSE, env, fun, ...){
   to <- min(as.Date(to), Sys.Date())
   from <- as.Date(from)
   this.env <- environment()
@@ -300,7 +305,7 @@ getSymbols.Finam <- function(Symbols, from = Sys.Date() - 1000, to = Sys.Date(),
       parts <- list()
       while(TRUE){
         tryCatch({
-          parts[[1]] <- getSymbols.Finam_(Symbols = Symbol, from = to - period,
+          parts[[1]] <- fun(Symbols = Symbol, from = to - period,
                                           to = to, auto.assign = FALSE, env = this.env, ...)
           break
         },
@@ -316,7 +321,7 @@ getSymbols.Finam <- function(Symbols, from = Sys.Date() - 1000, to = Sys.Date(),
         part <- 2
         while(part <= nparts){
           tryCatch({
-            parts[[length(parts) + 1]] <- getSymbols.Finam_(Symbols = Symbol, from = to - period * part,
+            parts[[length(parts) + 1]] <- fun(Symbols = Symbol, from = to - period * part,
                                                             to = to - period * (part - 1) - 1, auto.assign = FALSE,
                                                             env = this.env, ...)
           },
@@ -340,7 +345,6 @@ getSymbols.Finam <- function(Symbols, from = Sys.Date() - 1000, to = Sys.Date(),
   if(length(Symbols) > 1 || auto.assign){
     return(Symbols)
   }
-
 }
 
 

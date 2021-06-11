@@ -1,6 +1,6 @@
 #poloniex
-#' @export getSymbols.Poloniex
-getSymbols.Poloniex <- function(Symbols, env, return.class = "xts",
+#' @export getSymbols.Poloniex_
+getSymbols.Poloniex_ <- function(Symbols, env, return.class = "xts",
                                 from = "2007-01-01", to = Sys.Date(),  period = "day",
                                 col_funs = NULL, timecuts = list(), date_format = NULL,
                                 auto.assign = FALSE,
@@ -16,8 +16,28 @@ getSymbols.Poloniex <- function(Symbols, env, return.class = "xts",
     verbose <- FALSE
   if (missing(auto.assign))
     auto.assign <- FALSE
+  ind_to_period <- FALSE
   if(is.numeric(period)){
-    p <- p * 60
+    p <- period * 60
+    if(period %% 240 == 0){
+      p <- 240 * 60
+      ind_to_period <- period != 240
+    }else if(period %% 120 == 0){
+      p <- 120 * 60
+      ind_to_period <- period != 120
+    }else if(period %% 30 == 0){
+      p <- 30 * 60
+      ind_to_period <- period != 30
+    }else if(period %% 15 == 0){
+      p <- 15 * 60
+      ind_to_period <- period != 15
+    }else if(period %% 5 == 0){
+      p <- 5 * 60
+      ind_to_period <- period != 5
+    }else{
+      p <- 5 * 60
+      ind_to_period <- FALSE
+    }
   }else{
     p <- 0
     if ("5min" == period)
@@ -81,6 +101,14 @@ getSymbols.Poloniex <- function(Symbols, env, return.class = "xts",
                           c("High", "Low", "Open", "Close", "Volume", 'QuoteVolume', 'WeightedAverage'),
                           sep = ".")
     fr <- convert.time.series(fr = fr, return.class = return.class)
+    fr <- fr[,1:5]
+    if(ind_to_period){
+      nms <- colnames(fr)
+      #index(fr) <- index(fr) - 60
+      fr <- to.period(fr, period='minutes', k = period)
+      #index(fr) <- index(fr) + 60
+      colnames(fr) <- nms
+    }
     if(!is.null(col_funs)){
       fr <- lapply(col_funs, function(fun){
         do.call(fun, args = list(fr))
@@ -93,16 +121,17 @@ getSymbols.Poloniex <- function(Symbols, env, return.class = "xts",
     if (auto.assign){
       assign(Symbols[i], fr, env)
     }
-    if (i >= 5 && length(Symbols) > 5) {
-      message("pausing 1 second between requests for more than 5 symbols")
-      Sys.sleep(1)
-    }
   }
   if (auto.assign)
     return(Symbols)
   return(fr)
 }
 
+
+#' @export getSymbols.Poloniex
+getSymbols.Poloniex <- function(Symbols, from = Sys.Date() - 1000, to = Sys.Date(), auto.assign = FALSE, env, ...){
+  load_by_parts(Symbols=Symbols, from = from, to = to, auto.assign = auto.assign, env=env, fun=getSymbols.Poloniex_, ...)
+}
 
 
 
