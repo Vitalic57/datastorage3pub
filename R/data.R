@@ -12,9 +12,9 @@ data_from_list_xts <- function(l,
                                na_locf = TRUE,
                                columns = c('Cl', 'Ad', 'Vo', 'Di', 'Sp')){
   # browser()
-  f <- . %>% Reduce('cbind', .)
+  f <- . %>% Reduce('cbind', .) %>% set_rownames(NULL)
   if(names_from_list){
-    f <- . %>% Reduce('cbind', .) %>% set_colnames(names(l))
+    f <- . %>% Reduce('cbind', .) %>% set_colnames(names(l)) %>% set_rownames(NULL)
   }
 
   g <- . %>%

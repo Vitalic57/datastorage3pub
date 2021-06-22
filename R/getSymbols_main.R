@@ -51,6 +51,7 @@ download_instrument <- function(this, name, from, to, ...){
 
 
 download_instrument_last <- function(this, name, ...){
+  # print('last')
   info <- getInstrument(this, name)
   ids <- c(info$download, info$identifiers %>% unlist, info$primary_id)
 
@@ -79,7 +80,9 @@ download_instrument_last <- function(this, name, ...){
         args <- c(args, info$args_getSymbols)
         args[duplicated(names(args), fromLast = TRUE)] <- NULL
       }
+      # print(args)
       x <- do.call('getLast', args = args)
+      index(x) <- Sys.Date()
       break
     }, error = function(e){
       print(e)
@@ -123,6 +126,7 @@ getSymbols.Data <- function(this, version = NULL, download_fun=download_instrume
   for(name in c('to', 'from')){
     dots[[name]] <- eval(dots[[name]])
   }
+  dots <- dots[c('to', 'from')]
   do.call(paste0('getSymbols_', version),
           args=c(list(this, download_fun=download_fun), list(...), dots))
 }
