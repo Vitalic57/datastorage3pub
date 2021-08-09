@@ -11,7 +11,7 @@ data_from_list_xts <- function(l,
                                na_omit = TRUE,
                                na_locf = TRUE,
                                columns = c('Cl', 'Ad', 'Vo', 'Di', 'Sp')){
-  # browser()
+  #browser()
   f <- . %>% Reduce('cbind', .) %>% set_rownames(NULL)
   if(names_from_list){
     f <- . %>% Reduce('cbind', .) %>% set_colnames(names(l)) %>% set_rownames(NULL)
@@ -61,6 +61,11 @@ data_from_list_xts <- function(l,
     l <- lapply(l, function(x){
       to.period3(x[dates], period = data$._period)
     })
+    if(na_omit){
+      dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(intersect, .) # %>% as.Date
+    }else{
+      dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(union, .)
+    }
   }
   data_was_null <- FALSE
   if(is.null(data)){

@@ -13,7 +13,9 @@ getDividends.yahoo <- function (Symbol, from = "1970-01-01", to = Sys.Date(), en
   handle <- quantmod:::.getHandle()
   yahoo.URL <- quantmod:::.yahooURL(Symbol.name, from.posix, to.posix,
                          "1d", "div", handle)
-  fr <- read.csv(curl::curl(yahoo.URL, handle = handle$ch))
+  con <- curl::curl(yahoo.URL, handle = handle$ch)
+  fr <- read.csv(con)
+  try(close(con), silent = TRUE)
   fr <- xts(fr[, 2], as.Date(fr[, 1]))
   colnames(fr) <- paste(Symbol.name, "div", sep = ".")
   if (src[1] == "yahoo" && !split.adjust) {
