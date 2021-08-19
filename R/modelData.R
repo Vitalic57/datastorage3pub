@@ -7,8 +7,8 @@ Data <- function(){
   me <- list(
     ._period  = "day", # one of min,hour,day,week,month
     ._freq = 1,
-    from = Sys.Date() - 30,
-    to = Sys.Date(),
+    from = quote(Sys.Date() - 30),
+    to = quote(Sys.Date()),
     columns = c('Cl', 'Sp', 'Di'),
     ._shift =0,
     ._candles = FALSE,

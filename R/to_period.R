@@ -40,7 +40,12 @@ to.period2 <- function(x, period, k = 1){
 
   period <- period2xts(period)
   res <- to.period(x, period = period, k = k, name = name)
-  res <- res[, intersect(colnames(x), colnames(res))]
+  nms <- intersect(colnames(x), colnames(res))
+  if(length(nms) == 0){
+    res <- Cl(res) %>% set_colnames(colnames(x))
+  }else{
+    res <- res[, intersect(colnames(x), colnames(res))]
+  }
   if(has.Sp(x) || has.Di(x)){
     ep <- endpoints(x, on = period, k = k)
   }

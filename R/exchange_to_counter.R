@@ -10,10 +10,10 @@ exchange_to_counter <- function(this, table, inds){
   if(length(inds) != nrow(table)){
     stop('Length of inds and nrow of table do not coinside')
   }
-  nms <- colnames(table)
+  nms <- make.names(colnames(table))
   for(i in seq_len(ncol(table))){
     tryCatch({
-      inst <- getInstrument(this, nms[i])
+      inst <- this$envir[[nms[i]]]#getInstrument(this, nms[i])
       if(inst$currency == this$currency){
         next
       }

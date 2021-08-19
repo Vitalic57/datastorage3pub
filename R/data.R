@@ -58,13 +58,28 @@ data_from_list_xts <- function(l,
     merge(x, dates) %>% g %>% .[dates]
   })
   if(!is.null(data)){
-    l <- lapply(l, function(x){
-      to.period3(x[dates], period = data$._period)
+    suppressWarnings({
+      l <- lapply(l, function(x){
+        to.period3(x[dates], period = data$._period)
+      })
     })
+
     if(na_omit){
       dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(intersect, .) # %>% as.Date
     }else{
       dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(union, .)
+    }
+    if(dates_class[1] == 'Date'){
+      dates <- as.Date(dates)
+    }
+    if(dates_class[1] == 'POSIXct'){
+      dates <- as.POSIXct(dates)
+    }
+    if(dates_class[1] == 'POSIXlt'){
+      dates <- as.POSIXlt(dates)
+    }
+    if(!all(sapply(l, nrow) == nrow(l[[1]]))){
+      l <- lapply(l, function(x) merge(x, dates))
     }
   }
   data_was_null <- FALSE

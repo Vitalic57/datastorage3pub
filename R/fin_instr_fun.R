@@ -180,22 +180,16 @@ stock.Data <- function(this, ...){
 #' @method index Data
 #' @export
 index.Data <- function(this, ...){
+  f <- 'index'
   tmp <- FinancialInstrument:::.instrument
   assignInNamespace("instrument", instrument, "FinancialInstrument")
   assignInNamespace(".instrument", this$envir, "FinancialInstrument")
   tryCatch({
     dots <- list(...)
-    # if(!'src' %in% names(dots)){
-    #   dots[['src']] <- PARAMS('src')
-    # }
     dots <- add_currency_to_dots(this, dots)
     add_exchange_rate(this, dots[['currency']])
+    #do.call(eval(parse(text = paste0('FinancialInstrument::',f))), args = dots)
     do.call('index_', args = dots)
-    if('primary_id' %in% names(dots)){
-      setOrder(this, c(getOrder(this), dots[['primary_id']]))
-    }else{
-      setOrder(this, c(getOrder(this), dots[[1]]))
-    }
 
   },
   finally =

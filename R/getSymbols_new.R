@@ -8,11 +8,13 @@
 #' @export
 #'
 #' @examples
-getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download_instrument, ...){
+getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download_instrument,
+                           save_trade_inst=FALSE,
+                           ...){
   # browser()
   dots <- list(...)
   if(prices){
-    instruments <- sapply(c(ls_stocks, ls_indexes), function(x) this %>% x) %>% unlist
+    instruments <- ls_stocks(this) #sapply(c(ls_stocks, ls_indexes), function(x) this %>% x) %>% unlist
     trade_inst <- list()
     nontraded <- list()
     if('Di' %in% this$columns || 'Sp' %in% this$columns){
@@ -119,6 +121,9 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
                                  na_omit = na_omit,
                                  na_locf = na_locf,
                                  data = this)
+      if(save_trade_inst){
+        this$trade_inst <- trade_inst
+      }
     }
     this$nontraded <- nontraded
     for(i in seq_along(this$exchange_rates)){

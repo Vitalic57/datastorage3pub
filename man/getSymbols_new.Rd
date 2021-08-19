@@ -9,6 +9,7 @@ getSymbols_new(
   prices = TRUE,
   tables = TRUE,
   download_fun = download_instrument,
+  save_trade_inst = FALSE,
   ...
 )
 }

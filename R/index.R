@@ -21,9 +21,9 @@ index_ <- function (primary_id, currency = NULL, multiplier = 1, tick_size = 0.0
   }
   if (length(primary_id) > 1) {
     out <- sapply(primary_id, function(prime_id){
-      index(this, prime_id, currency = currency,
-            multiplier = multiplier, tick_size = tick_size, identifiers = identifiers,
-            assign_i = assign_i, trade = FALSE, ... = ..., simplify = assign_i)
+      instrument(primary_id = prime_id, currency = currency,
+                 multiplier = multiplier, tick_size = tick_size, identifiers = identifiers,
+                 ..., type = "index", assign_i = assign_i, trade = FALSE)
     })
     return(if (assign_i) unname(out) else out)
   }
