@@ -14,7 +14,7 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
   # browser()
   dots <- list(...)
   if(prices){
-    instruments <- ls_stocks(this) #sapply(c(ls_stocks, ls_indexes), function(x) this %>% x) %>% unlist
+    instruments <- ls_stocks  #sapply(ls_stocks, function(x) this %>% x) %>% unlist
     trade_inst <- list()
     nontraded <- list()
     if('Di' %in% this$columns || 'Sp' %in% this$columns){
