@@ -9,7 +9,7 @@ Data <- function(){
     ._freq = 1,
     from = quote(Sys.Date() - 30),
     to = quote(Sys.Date()),
-    columns = c('Cl', 'Sp', 'Di'),
+    columns = 'Ad',
     ._shift =0,
     ._candles = FALSE,
     na_locf = TRUE,
