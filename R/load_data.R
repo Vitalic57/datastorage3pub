@@ -2,9 +2,9 @@ get_ids <- function(name){
   names(finam.stock.list) %>% {which(tolower(name) == tolower(.))} %>% {(finam.stock.list)[.]} %>% as.character %>% as.numeric %>% unique
 }
 
-loadStockList <- function (verbose = FALSE, mkts = c(1, 25, 520, 7, 14, 24, 6, 17))
+loadStockList <- function (verbose = FALSE, mkts = c(1, 25, 520, 7, 14, 24, 6, 17, 91))
 {
-  stocklist.URL = "https://www.finam.ru/cache/icharts/icharts.js" #N72Hgd54
+  stocklist.URL = "https://www.finam.ru/cache/N72Hgd54/icharts/icharts.js" #N72Hgd54
   tmp <- tempfile()
   download.file(stocklist.URL, destfile = tmp, quiet = !verbose)
   fr <- readLines(con = tmp, warn = FALSE)
