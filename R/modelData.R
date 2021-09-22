@@ -7,7 +7,7 @@ Data <- function(){
   me <- list(
     ._period  = "day", # one of min,hour,day,week,month
     ._freq = 1,
-    from = quote(Sys.Date() - 30),
+    from = quote('2000-01-01'),
     to = quote(Sys.Date()),
     columns = 'Ad',
     ._shift =0,
