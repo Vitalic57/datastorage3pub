@@ -17,7 +17,7 @@ Data <- function(){
     ncol = 0,
     nrow = 0,
     currency = 'USD',
-    mat = list(),
+    price_columns = c('open', 'high', 'low', 'close', 'adjusted', 'dividends', 'splits'),
     nontraded = list(),
     exchange_rates = list(), # environment for data of exchange rates
     envir = new.env(), #Financial instrument environment
@@ -338,15 +338,15 @@ getDateByIndex.Data <- function(this, indexes = NULL){
 
 
 nrow.Data <- function(this){
-  nrow(this$mat[[1]])
+  nrow(this[[this$price_table]])
 }
 
 
 ncol.Data <- function(this){
-  ncol(this$mat[[1]])
+  ncol(this[[this$price_table]])
 }
 
 
 colnames.Data <- function(this){
-  colnames(this$mat[[1]])
+  colnames(this[[this$price_table]])
 }

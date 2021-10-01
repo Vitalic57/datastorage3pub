@@ -213,32 +213,34 @@ data_from_list_xts <- function(l,
     volume <- NULL
   }
 
-  data$mat <- list()
+  #data$mat <- list()
 
-  data$mat$adjusted <- adjusted
-  data$mat$close <- close
-  data$mat$dividends <- dividends
-  data$mat$splits <- splits
-  data$mat$open <- open
-  data$mat$high <- high
-  data$mat$low <- low
-  data$mat$volume <- volume
+  data$adjusted <- adjusted
+  data$close <- close
+  data$dividends <- dividends
+  data$splits <- splits
+  data$open <- open
+  data$high <- high
+  data$low <- low
+  data$volume <- volume
 
   data$dates <- dates
+  
+  
+  if(!is.null(data$close)){
+    data$price_table <- 'close'
+    
+  }else if(!is.null(data$adjusted)){
+    data$price_table <- 'adjusted'
+  }else{
+    warning('Price table is not specified')
+  }
   data$nrow <- nrow.Data(data)
   data$ncol <- ncol.Data(data)
   data$colnames <- colnames.Data(data)
   if(data_was_null){
     data %>% stock(data$colnames)
   }
-  if('close' %in% names(data$mat)){
-    data$price_table <- which(names(data$mat) == 'close')
-  }else if('adjusted' %in% names(data$mat)){
-    data$price_table <- which(names(data$mat) == 'adjusted')
-  }else{
-    warning('Price table is not specified')
-  }
-
   return(data)
 }
 
