@@ -16,6 +16,7 @@ Data <- function(){
     na_omit = TRUE,
     ncol = 0,
     nrow = 0,
+    multiple_currencies = FALSE,
     currency = 'USD',
     price_columns = c('open', 'high', 'low', 'close', 'adjusted', 'dividends', 'splits'),
     nontraded = list(),
