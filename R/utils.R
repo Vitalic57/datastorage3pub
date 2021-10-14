@@ -23,6 +23,9 @@ shrink_by_ind <- function(data, start_ind, end_ind, copy=TRUE){
       res[[block]][[name]] <- data[[block]][[name]][start_ind:end_ind,,drop=FALSE]
     }
   }
+  for(name in data$price_columns){
+    res[[name]] <- data[[name]][start_ind:end_ind,,drop=FALSE]
+  }
   for(name in names(data)){
     if(name %in% c( 'dates', 'indexes', data$price_columns)){
       next
