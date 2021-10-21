@@ -15,9 +15,6 @@ shrink_by_ind <- function(data, start_ind, end_ind, copy=TRUE){
     res <- data
   }
   for(block in c('indexes')){
-    if(!block %in% names(data)){
-      next
-    }
     res[[block]] <- list()
     for(name in names(data[[block]])){
       res[[block]][[name]] <- data[[block]][[name]][start_ind:end_ind,,drop=FALSE]
