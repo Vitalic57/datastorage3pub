@@ -17,5 +17,5 @@ get_subset(data, rows, columns)
 Data
 }
 \description{
-All tables will be subset. Indexes will not be included
+All tables will be subset
 }

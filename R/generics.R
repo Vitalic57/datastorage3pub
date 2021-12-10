@@ -40,11 +40,11 @@ f_makeGen <- function(f){
 
 
 #create generic functions
-funs_all <- c("instrument_attr","add.identifier",
-              "getInfo")
-funs <- lapply(funs_all, f_makeGen)
-names(funs) <- funs_all
-list2env(funs,envir = environment())
+# funs_all <- c("getInfo")
+# funs <- lapply(funs_all, f_makeGen)
+# names(funs) <- funs_all
+# list2env(funs,envir = environment())
+
 
 
 #' @export
@@ -140,6 +140,40 @@ exchange_rate <- function(this,...){
 stock <- function(this, ...){
   UseMethod('stock', this)
 }
+
+#' Set attribute to instrument
+#'
+#' @param this Data
+#' @param ... params
+#'
+#' @return Data object
+#' @export
+instrument_attr <- function(this, ...){
+  UseMethod('instrument_attr', this)
+}
+
+#' Add identifier
+#'
+#' @param this Data
+#' @param ... params
+#'
+#' @return Data object
+#' @export
+add.identifier <- function(this, ...){
+  UseMethod('add.identifier', this)
+}
+
+#' getInfo
+#'
+#' @param this Data
+#' @param ... params
+#'
+#' @return Data object
+#' @export
+getInfo <- function(this, ...){
+  UseMethod('getInfo', this)
+}
+
 
 #' Returns stocks in this
 #'
@@ -530,12 +564,12 @@ adjust <- function(this, ...){
 
 #create s3 methods with try catch from FinancialInstrument
 #these methods return Data
-funs_part <- setdiff(funs_all,c("update_instruments", "getSymbols",
-                                "modify","addInstruments","getInfo",'rm_data','cloneData','C2LFX',
-                                'getLastCurrency'))
-funs <- lapply(funs_part, f_tryCatch_FI)
-names(funs) <- paste0(funs_part,".Data")
-list2env(funs,envir = environment())
+# funs_part <- setdiff(funs_all,c("update_instruments", "getSymbols",
+#                                 "modify","addInstruments","getInfo",'rm_data','cloneData','C2LFX',
+#                                 'getLastCurrency'))
+# funs <- lapply(funs_part, f_tryCatch_FI)
+# names(funs) <- paste0(funs_part,".Data")
+# list2env(funs,envir = environment())
 
 #create defaults methods for functions from FinancialInstrument
 # funs_part <- setdiff(funs_all,c("update_instruments","getSymbols","modify",
