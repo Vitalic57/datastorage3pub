@@ -15,8 +15,13 @@ currency.Data <- function(this, ...){
   tryCatch({
     FinancialInstrument::currency(...)
   },
-  finally =
-    assignInNamespace('.instrument', tmp, 'FinancialInstrument'))
+  finally = {
+    assignInNamespace('.instrument', tmp, 'FinancialInstrument')
+  }
+    )
+  if(length(ls_currencies(this)) > 1){
+    this[['multiple_currencies']] <- TRUE
+  }
   return(invisible(this))
 }
 

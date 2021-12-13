@@ -16,6 +16,7 @@ Data <- function(){
     na_omit = TRUE,
     ncol = 0,
     nrow = 0,
+    multiple_currencies = FALSE,
     currency = 'USD',
     price_columns = c('open', 'high', 'low', 'close', 'adjusted', 'dividends', 'splits'),
     'open' = NULL,
@@ -34,6 +35,7 @@ Data <- function(){
   me <- list2env(me, thisEnv)
 
   ## Set the name for the class
+  #class(me) <- "Datastorage"
   class(me) <- append("Data", class(me))
   return(me)
 }
@@ -61,9 +63,9 @@ getBuildPeriod.Data <- function(this, recalc = FALSE){
 #' @param this Data
 #'
 #' @return Data
-#' @export
 #' @rdname setBuildPeriod
 #' @method setBuildPeriod Data
+#' @export
 setBuildPeriod.Data <- function(this, period){
   this[['._period_build']] <- period
   return(this)

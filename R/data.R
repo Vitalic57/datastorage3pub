@@ -11,7 +11,6 @@ data_from_list_xts <- function(l,
                                na_omit = TRUE,
                                na_locf = TRUE,
                                columns = c('Cl', 'Ad', 'Vo', 'Di', 'Sp')){
-  #browser()
   f <- . %>% Reduce('cbind', .) %>% set_rownames(NULL)
   if(names_from_list){
     f <- . %>% Reduce('cbind', .) %>% set_colnames(names(l)) %>% set_rownames(NULL)
@@ -35,12 +34,21 @@ data_from_list_xts <- function(l,
       }
     }
 
-  # dates <- l %>% lapply(function(x) x[,1]) %>% Reduce('cbind', .)  %>%
-  #   g %>%
-  #   index
   dates_class <- l[[1]] %>% index %>% class
+  tz <- tzone(l[[1]])
+  if(dates_class[1] %in% c('POSIXct', 'POSIXlt')){
+    if(length(l) > 1){
+      for(i in 2:length(l)){
+        if(tzone(l[[i]]) == tz){
+          next
+        }
+        tzone(l[[i]]) <- tz
+      }
+    }
+  }
+  
   if(na_omit){
-    dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(intersect, .) # %>% as.Date
+    dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(intersect, .)
   }else{
     dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(union, .)
   }
@@ -48,10 +56,10 @@ data_from_list_xts <- function(l,
     dates <- as.Date(dates)
   }
   if(dates_class[1] == 'POSIXct'){
-    dates <- as.POSIXct(dates)
+    dates <- as.POSIXct(dates, tz = tz)
   }
   if(dates_class[1] == 'POSIXlt'){
-    dates <- as.POSIXlt(dates)
+    dates <- as.POSIXlt(dates, tz = tz)
   }
 
   l <- lapply(l, function(x){
@@ -65,7 +73,7 @@ data_from_list_xts <- function(l,
     })
 
     if(na_omit){
-      dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(intersect, .) # %>% as.Date
+      dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(intersect, .)
     }else{
       dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(union, .)
     }
@@ -73,10 +81,10 @@ data_from_list_xts <- function(l,
       dates <- as.Date(dates)
     }
     if(dates_class[1] == 'POSIXct'){
-      dates <- as.POSIXct(dates)
+      dates <- as.POSIXct(dates, tz = tz)
     }
     if(dates_class[1] == 'POSIXlt'){
-      dates <- as.POSIXlt(dates)
+      dates <- as.POSIXlt(dates, tz = tz)
     }
     if(!all(sapply(l, nrow) == nrow(l[[1]]))){
       l <- lapply(l, function(x) merge(x, dates))
@@ -213,7 +221,6 @@ data_from_list_xts <- function(l,
     volume <- NULL
   }
 
-  #data$mat <- list()
 
   data$adjusted <- adjusted
   data$close <- close
@@ -226,10 +233,8 @@ data_from_list_xts <- function(l,
 
   data$dates <- dates
   
-  
   if(!is.null(data$close)){
     data$price_table <- 'close'
-    
   }else if(!is.null(data$adjusted)){
     data$price_table <- 'adjusted'
   }else{
@@ -255,11 +260,12 @@ data_from_xts <- function(x, ...){
   if(is.null(nms)){
     nms <- paste0('x', 1:ncol(x))
   }
-  data_from_list_xts(lapply(seq_len(ncol(x)), function(i){
+  l <- lapply(seq_len(ncol(x)), function(i){
     y <- x[,i]
     if(!has.Ad(y)){
       colnames(y) <- paste0(nms[i], '.Adjusted')
     }
     y
-  }) %>% set_names(nms) , columns = 'Ad', candles = FALSE, names_from_list = TRUE)
+  })  %>% set_names(nms) 
+  data_from_list_xts(l, columns = 'Ad', candles = FALSE, names_from_list = TRUE)
 }
