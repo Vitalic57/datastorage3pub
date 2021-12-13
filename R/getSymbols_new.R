@@ -134,6 +134,9 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
         .[this$dates] %>%
         coredata
     }
+    if(length(this$exchange_rates) > 0){
+      this$ex_rates <- do.call('cbind', this$exchange_rates) %>% set_colnames(names(this$exchange_rates))
+    }
   }
 
 

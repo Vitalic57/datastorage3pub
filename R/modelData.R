@@ -18,8 +18,16 @@ Data <- function(){
     nrow = 0,
     currency = 'USD',
     price_columns = c('open', 'high', 'low', 'close', 'adjusted', 'dividends', 'splits'),
+    'open' = NULL,
+    'high' = NULL,
+    'low' = NULL,
+    'close' = NULL,
+    'adjusted' = NULL,
+    'dividends' = NULL,
+    'splits' = NULL,
+    'ex_rates' = NULL,
     nontraded = list(),
-    exchange_rates = list(), # environment for data of exchange rates
+    exchange_rates = list(),
     envir = new.env(), #Financial instrument environment
     tablesenv = new.env() # info for additional tables
   )
@@ -90,6 +98,7 @@ is.Data <- function(x){
 
 #' print.Data
 #'
+# dots <- list(...)
 #' @param x Data
 #' @param ... here can be additional arguments
 #'
