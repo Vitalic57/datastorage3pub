@@ -341,6 +341,7 @@ cloneData.Data <- function(this){
 #' @method getDateByIndex Data
 getDateByIndex.Data <- function(this, indexes = NULL){
   if(!is.null(indexes)){
+    indexes[indexes < 0] <- this[['nrow']] + 1 + indexes[indexes < 0]
     return(this$dates[indexes])
   }else{
     return(this$dates)
