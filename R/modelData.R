@@ -33,7 +33,7 @@ Data <- function(){
     tablesenv = new.env() # info for additional tables
   )
   me <- list2env(me, thisEnv)
-  parent.env(envir) <- emptyenv()
+  parent.env(thisEnv[['envir']]) <- emptyenv()
   ## Set the name for the class
   #class(me) <- "Datastorage"
   class(me) <- append("Data", class(me))
