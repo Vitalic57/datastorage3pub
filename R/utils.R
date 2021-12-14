@@ -54,20 +54,32 @@ get_subset <- function(data, rows, columns){
   if(missing(columns)){
     columns <- data[['colnames']]
   }
-  if(is.numeric(columns)){
+  if(is.numeric(columns) || is.logical(columns)){
     columns <- data$colnames[columns]
   }
   res <- new.env()
   class(res) <- c("Data", "environment")
-  for(name in data$price_columns){
+  res[['envir']] <- data[['envir']]
+  res[['multiple_currencies']] <- data[['multiple_currencies']]
+  for(name in data[['price_columns']]){
     res[[name]] <- data[[name]][rows, columns, drop=FALSE]
   }
-  res[["indexes"]] <- list()
-  for(name in names(data[["indexes"]])){
-    res[["indexes"]][[name]] <- data[["indexes"]][[name]][rows, columns, drop=FALSE]
+  res[['ex_rates']] <- data[['ex_rates']][rows, , drop=FALSE]
+  
+  for(block in c('indexes')){
+    res[[block]] <- list()
+    for(name in names(data[[block]])){
+      res[[block]][[name]] <- data[[block]][[name]][rows, columns, drop=FALSE]
+    }
   }
+  res[['exchange_rates']] <- list()
+  for(name in names(data[['exchange_rates']])){
+    res[['exchange_rates']][[name]] <- data[['exchange_rates']][[name]][rows, , drop=FALSE]
+  }
+  
+  
   for(name in names(data)){
-    if(name %in% c( 'dates', 'indexes', 'colnames', data[['price_columns']])){
+    if(name %in% c( 'dates', 'indexes', 'colnames', data[['price_columns']], 'ex_rates', 'exchange_rates')){
       next
     }
     res[[name]] <- data[[name]]
@@ -75,6 +87,11 @@ get_subset <- function(data, rows, columns){
   res[['dates']] <- data[['dates']][rows]
   res[['colnames']] <- columns
   res[['ncol']] <- length(columns)
-  res[['nrow']] <- length(rows)
+  if(is.logical(rows)){
+    res[['nrow']] <- sum(rows)
+  }else{
+    res[['nrow']] <- length(rows)
+  }
+  
   return(invisible(res))
 }

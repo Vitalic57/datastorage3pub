@@ -7,20 +7,30 @@
 #' @return matrix
 #' @export
 exchange_to_counter <- function(this, table, inds){
+  if(is.vector(table)){
+    table <- rbind(table)
+  }
   if(length(inds) != nrow(table)){
     stop('Length of inds and nrow of table do not coinside')
+  }
+  if(is.null(colnames(table))){
+    if(this[['ncol']] == ncol(table)){
+      colnames(table) <- this[['colnames']]
+    }else{
+      stop('Table should have names')
+    }
   }
   nms <- make.names(colnames(table))
   for(i in seq_len(ncol(table))){
     tryCatch({
-      inst <- this$envir[[nms[i]]]#getInstrument(this, nms[i])
-      if(inst$currency == this$currency){
+      inst <- this[['envir']][[nms[i]]]
+      if(inst[['currency']] == this[['currency']]){
         next
       }
-      if(paste0(inst$currency, this$currency) %in% names(this$exchange_rates)){
-        table[,i] <- table[,i] * this$exchange_rates[[paste0(inst$currency, this$currency)]][inds,,drop=FALSE]
+      if(paste0(inst[['currency']], this[['currency']]) %in% names(this[['exchange_rates']])){
+        table[,i] <- table[,i] * this[['exchange_rates']][[paste0(inst[['currency']], this[['currency']])]][inds,,drop=FALSE]
       }else{
-        table[,i] <- table[,i] / this$exchange_rates[[paste0(this$currency, inst$currency)]][inds,,drop=FALSE]
+        table[,i] <- table[,i] / this[['exchange_rates']][[paste0(this[['currency']], inst[['currency']])]][inds,,drop=FALSE]
       }
     },
     warning = function(w){
