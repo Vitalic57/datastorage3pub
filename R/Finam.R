@@ -1,6 +1,6 @@
 
 #' @export
-cut_time_of_day <- compiler::cmpfun(function(x, l) {
+cut_time_of_day <- function(x, l) {
   if(length(l) > 0){
     tstr_to_sec <- function(t_str) {
       #"09:00:00" to sec of day
@@ -26,7 +26,7 @@ cut_time_of_day <- compiler::cmpfun(function(x, l) {
     return(x)
   }
 
-})
+}
 
 
 convert.time.series <- function (fr, return.class)
@@ -66,6 +66,7 @@ convert.time.series <- function (fr, return.class)
 #' @param to character, end date
 #' @param adjust bool, if TRUE then 00:00:00 - > 23:59:59
 #' @param period character, one of 'day', '1min', '10min', 'hour'
+#' @param tz character scalar, timezone
 #' @param ... additional args
 #'
 #' @return nothing or table
@@ -73,7 +74,7 @@ convert.time.series <- function (fr, return.class)
 #'
 getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class = "Date",
                               from = "2007-01-01", to = Sys.Date(), adjust = FALSE, period = "day",
-                              col_funs = NULL, timecuts = list(),
+                              col_funs = NULL, tz = Sys.timezone(),
                               ...)
 {
   this.env <- environment()
@@ -139,7 +140,7 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
   }
 
   finam.HOST <- "export.finam.ru"
-  finam.URL <- "/table.csv?d=d&market=1&f=table&e=.csv&dtf=1&tmf=1&MSOR=1&sep=1&sep2=1&at=1&"
+  finam.URL <- "/table.csv?d=d&market=1&f=table&e=.csv&dtf=1&tmf=1&MSOR=0&sep=1&sep2=1&at=1&"
   fr <- NULL
   for (i in 1:length(Symbols)) {
     return.class <- getSymbolLookup()[[Symbols[[i]]]]$return.class
@@ -212,7 +213,7 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
         if (p == 1) {
           fr <- xts(apply(as.matrix(fr[, (5:6)]), 2, as.numeric),
                     as.POSIXct(strptime(paste(fr[, 3], fr[, 4]),
-                                        "%Y%m%d %H%M%S")), src = "finam", updated = Sys.time())
+                                        "%Y%m%d %H%M%S"), tz = 'Europe/Moscow'))
           colnames(fr) <- paste(toupper(gsub("\\^", "", Symbols.name)),
                                 c("Close", "Volume"), sep = ".")
         }
@@ -222,8 +223,7 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
             x <- rbind(x)
           }
           fr <- xts(x,
-                    as.Date(strptime(fr[, 3], "%Y%m%d")), src = "finam",
-                    updated = Sys.time())
+                    as.Date(strptime(fr[, 3], "%Y%m%d")))
           colnames(fr) <- paste(toupper(gsub("\\^", "", Symbols.name)),
                                 c("Open", "High", "Low", "Close", "Volume"),
                                 sep = ".")
@@ -235,7 +235,7 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
           }
           fr <- xts(x,
                     as.POSIXct(strptime(paste(fr[, 3], fr[, 4]),
-                                        "%Y%m%d %H%M%S")), src = "finam", updated = Sys.time())
+                                        "%Y%m%d %H%M%S"), tz = 'Europe/Moscow'))
           colnames(fr) <- paste(toupper(gsub("\\^", "", Symbols.name)),
                                 c("Open", "High", "Low", "Close", "Volume"),
                                 sep = ".")
@@ -257,14 +257,8 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
           index(fr) <- index(fr) + 60
           colnames(fr) <- nms
         }
-        if(!period %in% c('day','week','month') && !is.null(timecuts)){
-          fr <- cut_time_of_day(fr, timecuts)
-        }else{
-          if(is.xts(fr) && period %in% c('day','week','month')){
-            dates <- as.POSIXct(paste0(index(fr), " ","19:00"),
-                                tz = "", format = "%Y-%m-%d %H:%M")
-            index(fr) <- as.Date(dates)
-          }
+        if(!period %in% c('day','week','month')){
+          index(fr) <- lubridate::with_tz(index(fr), tz)
         }
         if (auto.assign){
           assign(Symbols[[i]], fr, env)
@@ -284,7 +278,6 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
   }
   if (auto.assign)
     return(Symbols)
-  #print(tail(fr))
   return(fr)
 }
 

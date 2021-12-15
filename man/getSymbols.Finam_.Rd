@@ -14,7 +14,7 @@
   adjust = FALSE,
   period = "day",
   col_funs = NULL,
-  timecuts = list(),
+  tz = Sys.timezone(),
   ...
 )
 }
@@ -34,6 +34,8 @@
 \item{adjust}{bool, if TRUE then 00:00:00 - > 23:59:59}
 
 \item{period}{character, one of 'day', '1min', '10min', 'hour'}
+
+\item{tz}{character scalar, timezone}
 
 \item{...}{additional args}
 }

@@ -22,6 +22,7 @@ download_instrument <- function(this, name, from, to, ...){
     contracts <- NULL
   }
   dots <- list(...)
+  tz <- this[['tz']]
   # download symbols
   for(id in ids){
     tryCatch({
@@ -33,6 +34,7 @@ download_instrument <- function(this, name, from, to, ...){
                    src = info$src,
                    auto.assign = FALSE,
                    contracts=contracts,
+                   tz = tz,
                    days_to_expir = days_to_expir
       )
       args <- c(args, dots)

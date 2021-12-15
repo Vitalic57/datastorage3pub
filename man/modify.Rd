@@ -24,7 +24,9 @@ modify(this, ...)
 
 * to - end date of downloads
 
-* columns - character vector with elements from c('cl', 'ad', 'op', 'hi', 'lo', 'di', 'sp')
+* tz - timezone
+
+* columns - character vector with elements from c('cl', 'ad', 'op', 'hi', 'lo', 'vo', 'di', 'sp')
 
 * candles - logical, whether save candles of instruments or not in candles slot
 

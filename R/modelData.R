@@ -28,6 +28,7 @@ Data <- function(){
     'splits' = NULL,
     'ex_rates' = NULL,
     nontraded = list(),
+    tz = Sys.timezone(),
     exchange_rates = list(),
     envir = new.env(), #Financial instrument environment
     tablesenv = new.env() # info for additional tables
@@ -127,8 +128,10 @@ print.Data <- function(x, ...){
 #' * from - start date of downloads
 #'
 #' * to - end date of downloads
+#' 
+#' * tz - timezone
 #'
-#' * columns - character vector with elements from c('cl', 'ad', 'op', 'hi', 'lo', 'di', 'sp')
+#' * columns - character vector with elements from c('cl', 'ad', 'op', 'hi', 'lo', 'vo', 'di', 'sp')
 #'
 #' * candles - logical, whether save candles of instruments or not in candles slot
 #'
@@ -231,6 +234,10 @@ modify.Data <- function(this, ...){
            candles=,
            bars= {
              this$._candles <- eval(data, envir=parent.frame())
+           },
+           timezone=,
+           tz={
+             this[['tz']] <- eval(data, envir = parent.frame())
            },
            na.omit=,
            na.rm=,
