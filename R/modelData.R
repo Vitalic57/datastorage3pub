@@ -29,7 +29,6 @@ Data <- function(){
     'ex_rates' = NULL,
     nontraded = list(),
     tz = Sys.timezone(),
-    exchange_rates = list(),
     envir = new.env(), #Financial instrument environment
     tablesenv = new.env() # info for additional tables
   )

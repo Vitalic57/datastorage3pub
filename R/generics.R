@@ -353,13 +353,13 @@ getSymbols <- function(Symbols, ...){
 
 
 #' @export
-getSymbols.default <- function( ..., src = 'yahoo'){
+getSymbols.default <- function( ..., env=parent.frame(),  src = 'yahoo'){
   if(src == 'yahoo'){
     src <- 'yahoo2'
   }else if(src == 'yahoo_'){
     src <- 'yahoo'
   }
-  quantmod:::getSymbols(..., src = src)
+  quantmod:::getSymbols(..., env=env, src = src)
 }
 
 

@@ -13,8 +13,9 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
                            ...){
   # browser()
   dots <- list(...)
+  exchange_rates <- list()
   if(prices){
-    instruments <- ls_stocks(this)  #sapply(ls_stocks, function(x) this %>% x) %>% unlist
+    instruments <- ls_stocks(this) 
     trade_inst <- list()
     nontraded <- list()
     if('Di' %in% this$columns || 'Sp' %in% this$columns){
@@ -27,11 +28,11 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
     for(instr in instruments){
       info <- getInstrument(this, instr)
 
-      if(!is.null(info[['ex_rate']])){
-        if(!info[['ex_rate']] %in% names(this$exchange_rates)){
-          this$exchange_rates[[info[['ex_rate']]]] <- download_fun(this, info[['ex_rate']], ...) %>% Cl
-        }
-      }
+      # if(!is.null(info[['ex_rate']])){
+      #   if(!info[['ex_rate']] %in% names(exchange_rates)){
+      #     exchange_rates[[info[['ex_rate']]]] <- download_fun(this, info[['ex_rate']], ...) %>% Cl
+      #   }
+      # }
       x <- download_fun(this, instr, add.actions = add.actions, ...)
       if(!is.null(info[['ex_rate']])){
         y <- x
@@ -41,7 +42,7 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
         if(has.Sp(x)){
           y <- y[,-has.Sp(x, which=TRUE)]
         }
-        rate <- this$exchange_rates[[info[['ex_rate']]]]
+        rate <- exchange_rates[[info[['ex_rate']]]]
         rate <- cbind(rate, y) %>% .[,1] %>% na.locf  %>% {.[index(y)]}
         if(getInstrument(this, info[['ex_rate']])[['base_currency']] == info[['currency']]){
           y <- y * drop(rate)
@@ -92,7 +93,7 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
       }else{
         nontraded[[info$primary_id]] <- x
       }
-      this$exchange_rates[[paste0(info$base_currency, info$currency)]] <- Cl(x)
+      exchange_rates[[paste0(info$base_currency, info$currency)]] <- Cl(x)
     }
     ##############################################################################################################
     # creation of main tables
@@ -126,23 +127,23 @@ getSymbols_new <- function(this, prices=TRUE, tables=TRUE, download_fun=download
       }
     }
     this$nontraded <- nontraded
-    for(i in seq_along(this$exchange_rates)){
-      this$exchange_rates[[i]] <- this$exchange_rates[[i]] %>%
+    for(i in seq_along(exchange_rates)){
+      exchange_rates[[i]] <- exchange_rates[[i]] %>%
         merge(this$dates) %>%
         na.locf %>%
         na.locf(fromLast=TRUE) %>%
         .[this$dates] %>%
         coredata
     }
-    if(length(this$exchange_rates) > 0){
-      this$ex_rates <- do.call('cbind', this$exchange_rates) %>% set_colnames(names(this$exchange_rates))
+    if(length(exchange_rates) > 0){
+      this$ex_rates <- do.call('cbind', exchange_rates) %>% set_colnames(names(exchange_rates))
     }
   }
 
 
-  if(tables){
-    add_tables(this, ...)
-  }
+  # if(tables){
+  #   add_tables(this, ...)
+  # }
   return(this)
 }
 
@@ -155,16 +156,17 @@ add_tables <- function(this, ...){
     info <- this$tablesenv[[tbl]]
 
     # download exchange rates
-    if(!is.null(info[['ex_rate']])){
-      for(ex in unlist(info[['ex_rate']])){
-        if(is.na(ex)){
-          next
-        }
-        if(!ex %in% names(this$exchange_rates)){
-          this$exchange_rates[[ex]] <- download_instrument(this, ex, ...) %>% Cl
-        }
-      }
-    }
+    # if(!is.null(info[['ex_rate']])){
+    #   for(ex in unlist(info[['ex_rate']])){
+    #     if(is.na(ex)){
+    #       next
+    #     }
+    #     if(!ex %in% names(this$ex_rates)){
+    #       x <- download_instrument(this, ex, ...) %>% Cl %>% merge(this$dates) %>% na.locf %>% na.locf(fromLast=TRUE) %>% .[dates] %>% coredata
+    #       this$ex_rates <- cbind(this$ex_rates,  x) %>% set_colnames(c(colnames(this$ex_rates), ex))
+    #     }
+    #   }
+    # }
 
     # download table
     if(!is.null(info$download)){
@@ -290,7 +292,7 @@ add_tables <- function(this, ...){
                           if(is.na(rate_name)){
                             return(results[[i]])
                           }
-                          rate <- this$exchange_rates[[rate_name]]
+                          rate <- this$ex_rates[,rate_name]
                           rate <- cbind(rate, y) %>% .[,1] %>% na.locf  %>% {.[index(y)]}
                           if(getInstrument(this, rate_name)[['base_currency']] == current_cur[i]){
                             y <- y * drop(rate)
@@ -318,7 +320,7 @@ add_tables <- function(this, ...){
                         if(length(current_cur) > 1){
                           stop("Error with currencies length should be one")
                         }
-                        rate <- this$exchange_rates[[info[['ex_rate']][[cur_num]]]]
+                        rate <- this$ex_rates[,info[['ex_rate']][[cur_num]], drop=FALSE]
                         rate <- cbind(rate, y) %>% .[,1] %>% na.locf  %>% {.[index(y)]}
                         if(getInstrument(this, info[['ex_rate']][[cur_num]])[['base_currency']] == current_cur){
                           y <- y * drop(rate)

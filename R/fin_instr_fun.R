@@ -133,6 +133,8 @@ add_exchange_rate <- function(this, counter){
     }else{
       exchange_rate(this, ex, src = 'yahoo', download = paste0(base_cur, counter_cur, "=X"), trade = FALSE)
     }
+  }else if(PARAMS('src') == 'Finam'){
+    exchange_rate(this, ex, src = 'Finam', trade = FALSE)
   }
 }
 
@@ -379,15 +381,14 @@ exchange_rate.Data <- function(this,
     if (!exists(currency, where = this$envir, inherits = TRUE)) {
       currency(this, currency)
     }
-    # if (!exists(base_currency, where = this$envir, inherits = TRUE)) {
-    #   currency(this, base_currency)
-    # }
+    if (!exists(base_currency, where = this$envir, inherits = TRUE)) {
+      currency(this, base_currency)
+    }
     FinancialInstrument::instrument(primary_id = primary_id, currency = currency,
                multiplier = multiplier, tick_size = tick_size, identifiers = identifiers,
                trade = trade,
                ..., base_currency = base_currency, type = c("exchange_rate",
                                                                   "currency"), assign_i = assign_i)
-    # browser()
     add_exchange_rate(this, currency)
 
   },

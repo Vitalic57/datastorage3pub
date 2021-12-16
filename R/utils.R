@@ -72,14 +72,14 @@ get_subset <- function(data, rows, columns){
       res[[block]][[name]] <- data[[block]][[name]][rows, columns, drop=FALSE]
     }
   }
-  res[['exchange_rates']] <- list()
-  for(name in names(data[['exchange_rates']])){
-    res[['exchange_rates']][[name]] <- data[['exchange_rates']][[name]][rows, , drop=FALSE]
-  }
+  # res[['exchange_rates']] <- list()
+  # for(name in names(data[['exchange_rates']])){
+  #   res[['exchange_rates']][[name]] <- data[['exchange_rates']][[name]][rows, , drop=FALSE]
+  # }
   
   
   for(name in names(data)){
-    if(name %in% c( 'dates', 'indexes', 'colnames', data[['price_columns']], 'ex_rates', 'exchange_rates')){
+    if(name %in% c( 'dates', 'indexes', 'colnames', data[['price_columns']], 'ex_rates')){
       next
     }
     res[[name]] <- data[[name]]
