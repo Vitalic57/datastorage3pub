@@ -1,19 +1,16 @@
+#' @export
+#' @method getLast default
 getLast.default <- function (Symbols, src = "yahoo", what, ...) {
   args <- list(Symbols = Symbols, ...)
   if (!missing(what))
     args$what <- what
   df <- do.call(paste("getLast", src, sep = "."), args)
   return(df)
-  # if (nrow(df) != length(Symbols)) {
-  #   allSymbols <- data.frame(Symbol = Symbols, stringsAsFactors = FALSE)
-  #   df <- merge(allSymbols, df, by = "Symbol", all.x = TRUE)
-  # }
-  # rownames(df) <- df$Symbol
-  # df$Symbol <- NULL
-  # df[Symbols, ]
 }
 
 
+#' @export
+#' @method getLast yahoo
 getLast.yahoo <- function(Symbols, add.actions=FALSE, ...){
   df <- getQuote(Symbols, what = yahooQF('Last Trade (Price Only)'))
   res <- list()
@@ -53,7 +50,8 @@ getLast.yahoo <- function(Symbols, add.actions=FALSE, ...){
   return(res)
 }
 
-
+#' @export
+#' @method getLast Data
 getLast.Data <- function(this, ...){
   getSymbols(this, download_fun=download_instrument_last, ...)
 }
