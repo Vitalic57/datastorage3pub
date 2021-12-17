@@ -27,7 +27,7 @@ exchange_to_counter <- function(this, table, inds){
       if(inst[['currency']] == this[['currency']]){
         next
       }
-      if(paste0(inst[['currency']], this[['currency']]) %in% names(this[['ex_rates']])){
+      if(paste0(inst[['currency']], this[['currency']]) %in% colnames(this[['ex_rates']])){
         table[,i] <- table[,i] * this[['ex_rates']][inds,paste0(inst[['currency']], this[['currency']]),drop=FALSE]
       }else{
         table[,i] <- table[,i] / this[['ex_rates']][inds, paste0(this[['currency']], inst[['currency']]), drop=FALSE]
