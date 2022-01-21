@@ -11,6 +11,7 @@ data_from_list_xts <- function(l,
                                na_omit = TRUE,
                                na_locf = TRUE,
                                columns = c('Cl', 'Ad', 'Vo', 'Di', 'Sp')){
+  l <- lapply(l, na.omit)
   f <- . %>% Reduce('cbind', .) %>% set_rownames(NULL)
   if(names_from_list){
     f <- . %>% Reduce('cbind', .) %>% set_colnames(names(l)) %>% set_rownames(NULL)
@@ -46,7 +47,7 @@ data_from_list_xts <- function(l,
       }
     }
   }
-  
+
   if(na_omit){
     dates <- lapply(l, . %>% index %>% as.character) %>% Reduce(intersect, .)
   }else{
@@ -232,7 +233,7 @@ data_from_list_xts <- function(l,
   data$volume <- volume
 
   data$dates <- dates
-  
+
   if(!is.null(data$close)){
     data$price_table <- 'close'
   }else if(!is.null(data$adjusted)){
@@ -266,6 +267,6 @@ data_from_xts <- function(x, ...){
       colnames(y) <- paste0(nms[i], '.Adjusted')
     }
     y
-  })  %>% set_names(nms) 
+  })  %>% set_names(nms)
   data_from_list_xts(l, columns = 'Ad', candles = FALSE, names_from_list = TRUE)
 }

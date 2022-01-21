@@ -139,9 +139,11 @@ add_exchange_rate <- function(this, counter){
 }
 
 
-#' Add stock
-#'
+
 #' @param this Data
+#' @param src character scalar, source for normal download
+#' @param online_src character scalar, source for updating last point
+#' @param update_src character scalar, source for updating series to current date
 #' @param ... args to FinancialInstrument::stock
 #'
 #' @return Data object
