@@ -24,11 +24,11 @@ exchange_rate(this, ...)
 \arguments{
 \item{this}{Data}
 
-\item{primary_id}{character}
+\item{primary_id}{character, name of instrument}
 
-\item{currency}{character}
+\item{currency}{character, counter currency for USDRUB it equals to RUB}
 
-\item{base_currency}{character}
+\item{base_currency}{character, base currency for USDRUB it equals to USD}
 
 \item{tick_size}{numeric}
 
@@ -41,6 +41,8 @@ exchange_rate(this, ...)
 \item{multiplier}{numeric}
 
 \item{...}{character vector}
+
+\item{download}{character, name for downloading if it is not the same with primary_id}
 }
 \value{
 Data object

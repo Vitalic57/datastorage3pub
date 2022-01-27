@@ -16,7 +16,7 @@ stock(this, ...)
 
 \item{src}{character scalar, source for normal download}
 
-\item{online_src}{character scalar, source for updating last point}
+\item{online_src}{character scalar, source for updating last point, if it is omitted then update_src will be used.}
 
 \item{update_src}{character scalar, source for updating series to current date}
 }
