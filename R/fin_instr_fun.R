@@ -139,9 +139,11 @@ add_exchange_rate <- function(this, counter){
 }
 
 
-#' Add stock
-#'
+
 #' @param this Data
+#' @param src character scalar, source for normal download
+#' @param online_src character scalar, source for updating last point, if it is omitted then update_src will be used.
+#' @param update_src character scalar, source for updating series to current date
 #' @param ... args to FinancialInstrument::stock
 #'
 #' @return Data object
@@ -320,14 +322,15 @@ tbl.Data <- function(this,
 #' For detailed description see FinancialInstrument::exchange_rate
 #'
 #' @param this Data
-#' @param primary_id character
-#' @param currency character
-#' @param base_currency character
+#' @param primary_id character, name of instrument
+#' @param currency character, counter currency for USDRUB it equals to RUB
+#' @param base_currency character, base currency for USDRUB it equals to USD
 #' @param tick_size numeric
 #' @param identifiers list
 #' @param assign_i logical
 #' @param overwrite logical
 #' @param multiplier numeric
+#' @param download character, name for downloading if it is not the same with primary_id
 #' @param ... params
 #'
 #' @return Data object

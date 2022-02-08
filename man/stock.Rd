@@ -3,7 +3,7 @@
 \name{stock.Data}
 \alias{stock.Data}
 \alias{stock}
-\title{Add stock}
+\title{Adds stock to this}
 \usage{
 \method{stock}{Data}(this, ...)
 
@@ -13,6 +13,12 @@ stock(this, ...)
 \item{this}{Data}
 
 \item{...}{character vector of stocks}
+
+\item{src}{character scalar, source for normal download}
+
+\item{online_src}{character scalar, source for updating last point, if it is omitted then update_src will be used.}
+
+\item{update_src}{character scalar, source for updating series to current date}
 }
 \value{
 Data object
@@ -20,7 +26,5 @@ Data object
 Data object
 }
 \description{
-Add stock
-
 Adds stock to this
 }
