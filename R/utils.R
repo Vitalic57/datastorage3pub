@@ -44,10 +44,11 @@ shrink_by_ind <- function(data, start_ind, end_ind, copy=TRUE){
 #' @param data Data
 #' @param rows numeric vector
 #' @param columns character vector
+#' @param include_users_columns logical, whether get subset of user-defined tables or not
 #'
 #' @return Data
 #' @export
-get_subset <- function(data, rows, columns){
+get_subset <- function(data, rows, columns, include_users_tables=TRUE){
   if(missing(rows)){
     rows <- 1:data[['nrow']]
   }
@@ -82,7 +83,16 @@ get_subset <- function(data, rows, columns){
     if(name %in% c( 'dates', 'indexes', 'colnames', data[['price_columns']], 'ex_rates')){
       next
     }
-    res[[name]] <- data[[name]]
+    if(include_users_tables){
+      tryCatch({
+        res[[name]] <- data[[name]][rows, columns, drop=FALSE]
+      }, error = function(e){
+        res[[name]] <- data[[name]]
+      })
+    }else{
+      res[[name]] <- data[[name]]
+    }
+    
   }
   res[['dates']] <- data[['dates']][rows]
   res[['colnames']] <- columns

@@ -4,7 +4,7 @@
 \alias{get_subset}
 \title{Get subset of Data object}
 \usage{
-get_subset(data, rows, columns)
+get_subset(data, rows, columns, include_users_tables = TRUE)
 }
 \arguments{
 \item{data}{Data}
@@ -12,6 +12,8 @@ get_subset(data, rows, columns)
 \item{rows}{numeric vector}
 
 \item{columns}{character vector}
+
+\item{include_users_columns}{logical, whether get subset of user-defined tables or not}
 }
 \value{
 Data
