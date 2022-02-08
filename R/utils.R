@@ -58,6 +58,7 @@ get_subset <- function(data, rows, columns, include_users_tables=TRUE){
   if(is.numeric(columns) || is.logical(columns)){
     columns <- data$colnames[columns]
   }
+  columns_int <- sapply(columns, function(x) which(x == data$colnames)) %>% unname
   res <- new.env()
   class(res) <- c("Data", "environment")
   res[['envir']] <- data[['envir']]
@@ -85,7 +86,7 @@ get_subset <- function(data, rows, columns, include_users_tables=TRUE){
     }
     if(include_users_tables){
       tryCatch({
-        res[[name]] <- data[[name]][rows, columns, drop=FALSE]
+        res[[name]] <- data[[name]][rows, columns_int, drop=FALSE]
       }, error = function(e){
         res[[name]] <- data[[name]]
       })
