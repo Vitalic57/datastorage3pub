@@ -140,7 +140,7 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
   }
 
   finam.HOST <- "export.finam.ru"
-  finam.URL <- "/table.csv?d=d&market=1&f=table&e=.csv&dtf=1&tmf=1&MSOR=0&sep=1&sep2=1&at=1&"
+  finam.URL <- "/table.csv?d=d&f=table&e=.csv&dtf=1&tmf=1&MSOR=0&sep=1&sep2=1&at=1&"
   fr <- NULL
   for (i in 1:length(Symbols)) {
     return.class <- getSymbolLookup()[[Symbols[[i]]]]$return.class
@@ -176,17 +176,20 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
     # if (verbose)
     #   cat("downloading ", Symbols.name, ".....\n\n")
     Symbols.ids <- get_ids(Symbols.name, market)
-    for(Symbols.id in Symbols.ids){
+    for(j in seq_along(Symbols.ids)){
+      Symbols.id <- Symbols.ids[[j]][1, 1]
+      m <- Symbols.ids[[j]][1, 2]
       tryCatch({
         if (is.na(Symbols.id)) {
           if (verbose)
             cat("Don't know about", Symbols[[i]], "\n\n")
           next
         }
-        stock.URL <- paste(finam.URL, "p=", p, "&em=", Symbols.id,
+        stock.URL <- paste(finam.URL, "p=", p, "&market=", m, "&em=", Symbols.id,
                            "&df=", from.d, "&mf=", from.m, "&yf=", from.y, "&dt=",
                            to.d, "&mt=", to.m, "&yt=", to.y, "&cn=", Symbols.name,
                            sep = "")
+        #print(stock.URL)
         # if (verbose)
         #   cat(stock.URL)
         tmp <- tempfile()

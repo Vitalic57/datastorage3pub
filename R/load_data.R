@@ -8,14 +8,14 @@
 # }
 
 get_ids <- function(name, market=NULL){
-  results <- character(length(name))
+  results <- list()
   for(i in seq_along(name)){
     nm <- name[i]
     x <- finam.stock.list[finam.stock.list[,1] == nm, ]
     if(is.null(market)){
-      results[i] <- x[1, 2]
+      results[[i]] <- x[1, 2:3, drop=FALSE]
     }else{
-      results[i] <- x[x[,3] == as.character(market[i]), 2]
+      results[[i]] <- x[x[,3] == as.character(market[i]), 2:3, drop=FALSE]
     }
   }
   results
