@@ -11,6 +11,11 @@ download_instrument <- function(this, name, from, to, ...){
   }else{
     time <- NULL
   }
+  if('market' %in% names(info)){
+    market <- info$market
+  }else{
+    market <- NULL
+  }
   if('days_to_expir' %in% names(info)){
     days_to_expir <- info$days_to_expir
   }else{
@@ -35,6 +40,7 @@ download_instrument <- function(this, name, from, to, ...){
                    auto.assign = FALSE,
                    contracts=contracts,
                    tz = tz,
+                   market = market,
                    days_to_expir = days_to_expir
       )
       args <- c(args, dots)

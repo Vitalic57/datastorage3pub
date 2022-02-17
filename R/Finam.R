@@ -74,7 +74,7 @@ convert.time.series <- function (fr, return.class)
 #'
 getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class = "Date",
                               from = "2007-01-01", to = Sys.Date(), adjust = FALSE, period = "day",
-                              col_funs = NULL, tz = Sys.timezone(),
+                              col_funs = NULL, tz = Sys.timezone(), market=NULL,
                               ...)
 {
   this.env <- environment()
@@ -175,7 +175,7 @@ getSymbols.Finam_ <- function (Symbols, env, return.class = "xts", index.class =
                            Symbols.name)
     # if (verbose)
     #   cat("downloading ", Symbols.name, ".....\n\n")
-    Symbols.ids <- get_ids(Symbols.name) #finam.stock.list[Symbols.name]
+    Symbols.ids <- get_ids(Symbols.name, market)
     for(Symbols.id in Symbols.ids){
       tryCatch({
         if (is.na(Symbols.id)) {
